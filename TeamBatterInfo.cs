@@ -39,7 +39,8 @@ namespace LIneupUsageEstimator
             foreach (Player player in sorted)
             {
                 int totalAB = 0;
-                StringBuilder position = new StringBuilder();
+                Dictionary<MainWindow.POSITIONS, int> positions = new Dictionary<MainWindow.POSITIONS, int>();
+  //              StringBuilder position = new StringBuilder();
 
                 foreach (Object obj in LineupGrid.Children)
                 {
@@ -48,12 +49,13 @@ namespace LIneupUsageEstimator
                         ComboBox cb = (ComboBox)obj;
                         if (cb.SelectedItem != null && cb.SelectedItem is DefenseComboBoxItem)
                         {
-                            Lineup lineup = (Lineup)cb.GetValue(MainWindow.dp);
+                            LineupDataObj lineup = (LineupDataObj)cb.GetValue(MainWindow.dp);
                             Player selectedPlayer = ((DefenseComboBoxItem)cb.SelectedItem).Value;
                             if (selectedPlayer == player)
                             {
                                 MainWindow.POSITIONS pos = ((PositionObj)cb.GetValue(MainWindow.dpPos)).Position;
-                                position.Append(shortPositionName(pos));
+                                adjustPostionCount(positions, pos);
+                         //       position.Append(shortPositionName(pos));
                                 totalAB += lineup.EstimatedAtBats;
                             }
                         }
@@ -69,10 +71,40 @@ namespace LIneupUsageEstimator
                 InfoGrid.Children.Add(BuildPlayerInfoRow(player.Actual.ToString(), COLUMNS.ACTUAL, postion, Colors.Black));
                 InfoGrid.Children.Add(BuildPlayerInfoRow(Convert.ToString(remaining), COLUMNS.REMAINING, postion, remaining >= 0 ? Colors.Black : Colors.Red));
                 InfoGrid.Children.Add(BuildPlayerInfoRow(player.Bal, COLUMNS.BAL, postion, Colors.Black));
-                InfoGrid.Children.Add(BuildPlayerInfoRow(position.ToString(), COLUMNS.POSITIONS, postion, Colors.Black));
+                InfoGrid.Children.Add(BuildPlayerInfoRow(buildPositionDisplayString(positions), COLUMNS.POSITIONS, postion, Colors.Black));
                 postion++;
             }
         }
+
+        private void adjustPostionCount(Dictionary<MainWindow.POSITIONS, int> positions, MainWindow.POSITIONS pos)
+        {
+            if(positions.ContainsKey(pos))
+            {
+                positions[pos]++;
+            }
+            else
+            {
+                positions.Add(pos, 1);
+            }
+        }
+
+        private String buildPositionDisplayString(Dictionary<MainWindow.POSITIONS, int> positions)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach(MainWindow.POSITIONS pos in positions.Keys)
+            {
+                if(positions.ContainsKey(pos))
+                {
+                    int count = positions[pos];
+                    if (count > 1)
+                        sb.Append(shortPositionName(pos) + "(" + count + ")");
+                    else
+                        sb.Append(shortPositionName(pos));
+                }
+            }
+            return sb.ToString();
+        }
+
 
         private Label BuildPlayerInfoRow(String data, COLUMNS column, int row, Color color)
         {
@@ -92,23 +124,23 @@ namespace LIneupUsageEstimator
             switch (position)
             {
                 case MainWindow.POSITIONS.CATCHER:
-                    return "C ";
+                    return " C";
                 case MainWindow.POSITIONS.FIRSTBASE:
-                    return "1B ";
+                    return " 1B";
                 case MainWindow.POSITIONS.SECONDBASE:
-                    return "2B ";
+                    return " 2B";
                 case MainWindow.POSITIONS.THIRDBASE:
-                    return "3B ";
+                    return " 3B";
                 case MainWindow.POSITIONS.SHORTSTOP:
-                    return "SS ";
+                    return " SS";
                 case MainWindow.POSITIONS.LEFTFIELD:
-                    return "LF ";
+                    return " LF";
                 case MainWindow.POSITIONS.CENTERFIELD:
-                    return "CF ";
+                    return " CF";
                 case MainWindow.POSITIONS.RIGHTFIELD:
-                    return "RF ";
+                    return " RF";
                 default:
-                    return "DH ";
+                    return " DH";
 
             }
         }

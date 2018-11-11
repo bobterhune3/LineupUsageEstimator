@@ -61,6 +61,9 @@ namespace LIneupUsageEstimator
 
                     }
                 }
+
+                // THIS BUILDS THE ESTIMATED BATTER AT BATS PER TYPE TABLE
+                
                 RowDefinition row = new RowDefinition();
                 row.Height = GridLength.Auto;
                 InfoGrid.RowDefinitions.Add(row);
@@ -73,6 +76,7 @@ namespace LIneupUsageEstimator
                 InfoGrid.Children.Add(buildRow(valueRAB, COLUMNS.RHAB, rowCount, Colors.Black, FontWeights.Bold));
                 balanceLefties.Add(rowCount - 1, valueLAB);
                 balanceRighties.Add(rowCount - 1, valueRAB);
+                
                 rowCount++;
             }
 

@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:LIneupUsageEstimator"
         mc:Ignorable="d"
-        Title="Lineup Usage Calculator" Height="667.693" Width="1283.258" Initialized="Window_Initialized" ResizeMode="NoResize">
+        Title="Lineup Usage Calculator" Height="908.146" Width="1523.014" Initialized="Window_Initialized" ResizeMode="NoResize" Closing="LineupUsageCalculator_Closing">
     <Grid x:Name="At_Bat_Usage_Calculator">
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="522" Margin="650,82,0,0" VerticalAlignment="Top" Width="313"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="471" Margin="1161,368,0,0" VerticalAlignment="Top" Width="317"/>
         <ComboBox x:Name="CB_LIST_OF_TEAMS" HorizontalAlignment="Left" Margin="106,13,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CB_LIST_OF_TEAMS_SelectionChanged" SelectedIndex="1"/>
         <Label Content="Primary Team:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="91"/>
-        <Button x:Name="BTN_CLOSE" Content="Button" HorizontalAlignment="Left" Margin="931,609,0,0" VerticalAlignment="Top" Width="75" Click="BTN_CLOSE_Click"/>
-        <Grid x:Name="GRID" Margin="21,102,639.8,265.4" Width="616">
+        <Button x:Name="BTN_CLOSE" Content="Button" HorizontalAlignment="Left" Margin="1017,821,0,0" VerticalAlignment="Top" Width="75" Click="BTN_CLOSE_Click"/>
+        <Grid x:Name="GRID" Margin="22,64,15.8,552.4">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="HEADER" Height="25" />
                 <RowDefinition x:Name="Catcher" Height="25" />
@@ -26,11 +26,11 @@
             </Grid.RowDefinitions>
         </Grid>
 
-        <Grid x:Name="GRID_INFO" HorizontalAlignment="Left" Height="493" Margin="663,102,0,0" VerticalAlignment="Top" Width="286"/>
-        <Label Content="Team Batting Information" HorizontalAlignment="Left" Margin="720,55,0,0" VerticalAlignment="Top" Width="229"/>
+        <Grid x:Name="GRID_INFO" HorizontalAlignment="Left" Height="455" Margin="1168,384,0,0" VerticalAlignment="Top" Width="296"/>
+        <Label Content="Team Batting Information" HorizontalAlignment="Left" Margin="1198,342,0,0" VerticalAlignment="Top" Width="280"/>
         <Button x:Name="BTN_MANAGE_LINEUPS" Content="Manage Lineup" HorizontalAlignment="Left" Margin="241,16,0,0" VerticalAlignment="Top" Width="121" Click="BTN_MANAGE_LINEUPS_Click"/>
-        <Button x:Name="BTN_MANAGE_LINEUPS_Copy" Content="Update Opponents" HorizontalAlignment="Left" Margin="377,16,0,0" VerticalAlignment="Top" Width="121" Click="BTN_MANAGE_LINEUPS_Click"/>
-        <Grid x:Name="GRID_USAGE_STATS" HorizontalAlignment="Left" Height="460" Margin="974,102,0,0" VerticalAlignment="Top" Width="264"/>
-        <Label Content="Estimated Batter At Bats" HorizontalAlignment="Left" Margin="982,55,0,0" VerticalAlignment="Top" Width="229"/>
+        <Button x:Name="BTN_OPPONENTS" Content="Update Opponents" HorizontalAlignment="Left" Margin="377,16,0,0" VerticalAlignment="Top" Width="121" Click="BTN_OPPONENTS_Click"/>
+        <Grid x:Name="GRID_USAGE_STATS" HorizontalAlignment="Left" Height="412" Margin="22,368,0,0" VerticalAlignment="Top" Width="264"/>
+        <Label Content="Estimated Batter At Bats" HorizontalAlignment="Left" Margin="22,342,0,0" VerticalAlignment="Top" Width="229"/>
     </Grid>
 </Window>

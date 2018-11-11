@@ -62,7 +62,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BalanceUsageStats.cs" />
-    <Compile Include="Lineup.cs" />
+    <Compile Include="LineupDataObj.cs" />
     <Compile Include="LineupListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -79,6 +79,8 @@
     <Compile Include="reports\TeamRosterReport.cs" />
     <Compile Include="SOMTeamReportFile.cs" />
     <Compile Include="StaticColumnControlBase.cs" />
+    <Compile Include="storage\LineupPersistence.cs" />
+    <Compile Include="storage\TeamLineup.cs" />
     <Compile Include="TeamBatterInfo.cs" />
     <Compile Include="util\Config.cs" />
     <Page Include="MainWindow.xaml">

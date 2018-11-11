@@ -1,22 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using somReporter;
 using somReporter.util.somUsageAnalysis;
 using somReporter.team;
-using System.Data;
-
+using LIneupUsageEstimator.storage;
 
 namespace LIneupUsageEstimator
 {
@@ -33,13 +23,10 @@ namespace LIneupUsageEstimator
         // 0=Righties, 1=Lefties, Map is balance ("9L) and Projected At Bats
         private List<Dictionary<int, int>> balanceAtBats = new List<Dictionary<int, int>>();
 
-        Dictionary<POSITIONS, ComboBox> lhControl = new Dictionary<POSITIONS, ComboBox>();
-
-        private Label lineupLH_label;
-        private Label lineupRH_label;
-
         public static DependencyProperty dp;
         public static DependencyProperty dpPos;
+
+        private Dictionary<String, TeamLineup> storedLineups;
 
         public MainWindow()
         {
@@ -49,13 +36,15 @@ namespace LIneupUsageEstimator
 
         private void Window_Initialized(object sender, EventArgs e)
         {
-            dp = DependencyProperty.Register("LineupInfo", typeof(object), typeof(Lineup), new UIPropertyMetadata());
+            dp = DependencyProperty.Register("LineupInfo", typeof(object), typeof(LineupDataObj), new UIPropertyMetadata());
             dpPos = DependencyProperty.Register("Positions", typeof(object), typeof(PositionObj), new UIPropertyMetadata());
 
+            // Load Stored data from database file
+            storedLineups = LineupPersistence.loadDatabase();
 
             teamReportFile = new SOMTeamReportFile(Config.getConfigurationFile("rosterReport.PRT"));
             teamReportFile.parse();
-
+            
             List<Team> teams = teamReportFile.getTeams();
             CB_LIST_OF_TEAMS.Items.Add("SELECT ONE");
             foreach (Team team in teams)
@@ -65,10 +54,51 @@ namespace LIneupUsageEstimator
             GRID.Background = new SolidColorBrush(Colors.LightSteelBlue);
             GRID.ShowGridLines = true;
 
-            createColumn("POS", 0, 50);
-            lineupLH_label = createColumn("LH", 1, 200);
-            lineupRH_label = createColumn("RH", 2, 200);
+            dialogInitialized = true;
 
+            batterInfo = new TeamBatterInfo(GRID_INFO, GRID);
+            balanceUsage = new BalanceUsageStats(GRID_USAGE_STATS);
+        }
+
+        private void updateWorkbook(Team team, List<Player> players)
+        {
+            if (GRID.ColumnDefinitions.Count > 0) { 
+              GRID.ColumnDefinitions.RemoveRange(0, GRID.ColumnDefinitions.Count);
+              GRID.Children.RemoveRange(0, GRID.Children.Count);
+            }
+
+            buildWorksheetLabelColumn();
+
+            TeamLineup lineups = storedLineups[team.Abrv];
+            int index = 1;
+            foreach (LineupData lineupData in lineups.Lineups)
+            {
+                LineupDataObj lineup = new LineupDataObj(lineupData);
+
+                int pitcherArmIndex = lineup.PitcherArm.Equals("L") ? 0 : 1;
+                lineup.EstimatedAtBats = calculateAtBatsByLineup(balanceAtBats[pitcherArmIndex], lineup.getLineupData());
+
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.CATCHER, lineup, players));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.FIRSTBASE, lineup, players));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.SECONDBASE, lineup, players));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.THIRDBASE, lineup, players));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.SHORTSTOP, lineup, players));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.LEFTFIELD, lineup, players));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.CENTERFIELD, lineup, players));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.RIGHTFIELD, lineup, players));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.DH, lineup, players));
+
+                createColumn(lineup, index, 160);
+
+                index++;
+            }
+
+            GRID.UpdateLayout();
+        }
+
+        private void buildWorksheetLabelColumn()
+        {
+            createColumn("POS", 0, 50);
 
             GRID.Children.Add(BuildPositionTextBox("C", POSITIONS.CATCHER));
             GRID.Children.Add(BuildPositionTextBox("1B", POSITIONS.FIRSTBASE));
@@ -79,55 +109,6 @@ namespace LIneupUsageEstimator
             GRID.Children.Add(BuildPositionTextBox("CF", POSITIONS.CENTERFIELD));
             GRID.Children.Add(BuildPositionTextBox("RF", POSITIONS.RIGHTFIELD));
             GRID.Children.Add(BuildPositionTextBox("DH", POSITIONS.DH));
-
-
-            Lineup lineupLH = new Lineup();
-            lineupLH.PitcherArm = "L";
-            lineupLH.BalanceItemFrom = new LineupBalanceItem(0, 9, "L");
-            lineupLH.BalanceItemTo = new LineupBalanceItem(18, 9, "R");
-
-
-
-
-
-            GRID.Children.Add(BuildPlayerPostitionBox( 1, POSITIONS.CATCHER, lineupLH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 1, POSITIONS.FIRSTBASE, lineupLH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 1, POSITIONS.SECONDBASE, lineupLH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 1, POSITIONS.THIRDBASE, lineupLH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 1, POSITIONS.SHORTSTOP, lineupLH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 1, POSITIONS.LEFTFIELD, lineupLH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 1, POSITIONS.CENTERFIELD, lineupLH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 1, POSITIONS.RIGHTFIELD, lineupLH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 1, POSITIONS.DH, lineupLH));
-
-            Lineup lineupRH = new Lineup();
-            lineupRH.PitcherArm = "R";
-            lineupRH.BalanceItemFrom = new LineupBalanceItem(0, 9, "L");
-            lineupRH.BalanceItemTo = new LineupBalanceItem(18, 9, "R");
-            GRID.Children.Add(BuildPlayerPostitionBox( 2, POSITIONS.CATCHER, lineupRH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 2, POSITIONS.FIRSTBASE, lineupRH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 2, POSITIONS.SECONDBASE, lineupRH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 2, POSITIONS.THIRDBASE, lineupRH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 2, POSITIONS.SHORTSTOP, lineupRH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 2, POSITIONS.LEFTFIELD, lineupRH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 2, POSITIONS.CENTERFIELD, lineupRH));
-            GRID.Children.Add(BuildPlayerPostitionBox( 2, POSITIONS.RIGHTFIELD, lineupRH));
-            GRID.Children.Add(BuildPlayerPostitionBox(2, POSITIONS.DH, lineupRH));
-
-            dialogInitialized = true;
-
-            if (balanceAtBats.Count > 0)
-            {
-                int lhAB = calculateAtBatsByLineup(balanceAtBats[0], lineupLH);
-                lineupLH.EstimatedAtBats = lhAB;
-                int rhAB = calculateAtBatsByLineup(balanceAtBats[1], lineupRH);
-                lineupRH.EstimatedAtBats = rhAB;
-            }
-
-            batterInfo = new TeamBatterInfo(GRID_INFO, GRID);
-            balanceUsage = new BalanceUsageStats(GRID_USAGE_STATS);
-
-    //TODO        BTN_MANAGE_LINEUPS.IsEnabled = false;
         }
 
         private void BTN_CLOSE_Click(object sender, RoutedEventArgs e)
@@ -140,9 +121,8 @@ namespace LIneupUsageEstimator
             ComboBox cb = (ComboBox)sender;
             if(cb.SelectedItem != null)
             {
-                Lineup lineup = (Lineup)cb.GetValue(MainWindow.dp);
+                LineupDataObj lineup = (LineupDataObj)cb.GetValue(MainWindow.dp);
                 PositionObj position = (PositionObj)cb.GetValue(MainWindow.dpPos);
-                DefenseComboBoxItem selectedPlayer = (DefenseComboBoxItem) cb.SelectedItem;
 
                 Team team = (Team)this.CB_LIST_OF_TEAMS.SelectedItem;
                 List<Player> players = teamReportFile.getTeamBatters(team);
@@ -159,63 +139,24 @@ namespace LIneupUsageEstimator
                 if (item is Team)
                 {
                     Team team = (Team)item;
+
+                    TeamLineup selectedTeamLineup = LineupPersistence.lookupTeamLineup(storedLineups, team);
+                    System.Console.WriteLine(team.Abrv + " contains " + selectedTeamLineup.Lineups.Count + " lineups.");
+
                     List<Player> players = teamReportFile.getTeamBatters(team);
                     batterInfo.setPlayers(players);
                     balanceAtBats = balanceUsage.buildTable(teamReportFile, team);
 
-                    foreach( POSITIONS pos in lhControl.Keys)
-                    {
-                        lhControl[pos].Items.Clear();
-                    }
-
-
-                    LineupBalanceItem itemStart = new LineupBalanceItem(0, 9, "L");
-                    LineupBalanceItem itemEnd = new LineupBalanceItem(18, 9, "R");
-                    Lineup lineupLH = new Lineup();
-                    lineupLH.BalanceItemFrom = itemStart;
-                    lineupLH.BalanceItemTo = itemEnd;
-                    lineupLH.PitcherArm = "L";
-
-                    Lineup lineupRH = new Lineup();
-                    lineupRH.BalanceItemFrom = itemStart;
-                    lineupRH.BalanceItemTo = itemEnd;
-                    lineupRH.PitcherArm = "R";
-
-                    int lhAB = calculateAtBatsByLineup(balanceAtBats[0], lineupLH);
-                    //            lineupLH.EstimatedAtBats = lhAB;
-                    int rhAB = calculateAtBatsByLineup(balanceAtBats[1], lineupRH);
-
-                    if (players != null)
-                    {
-                        addPlayersByPosition(players, POSITIONS.CATCHER, lhAB);
-                        addPlayersByPosition(players, POSITIONS.FIRSTBASE, lhAB);
-                        addPlayersByPosition(players, POSITIONS.SECONDBASE, lhAB);
-                        addPlayersByPosition(players, POSITIONS.THIRDBASE, lhAB);
-                        addPlayersByPosition(players, POSITIONS.SHORTSTOP, lhAB);
-                        addPlayersByPosition(players, POSITIONS.LEFTFIELD, lhAB);
-                        addPlayersByPosition(players, POSITIONS.CENTERFIELD, lhAB);
-                        addPlayersByPosition(players, POSITIONS.RIGHTFIELD, lhAB);
-                        addPlayersByPosition(players, POSITIONS.DH, lhAB);
-                    }
-
-
-
-
-             //       int lhAB = calculateAtBatsByLineup(balanceAtBats[0], lineupLH);
-        //            lineupLH.EstimatedAtBats = lhAB;
-           //         int rhAB = calculateAtBatsByLineup(balanceAtBats[1], lineupRH);
-          //          lineupRH.EstimatedAtBats = rhAB;
-
-                    lineupLH_label.Content = "LH (" + lhAB + ")";
-                    lineupRH_label.Content = "RH (" + rhAB + ")";
-                    //MessageBox.Show("Players found for " + team.Abrv + ", count=" + players.Count);
+                    updateWorkbook(team, players);
                 }
                 BTN_MANAGE_LINEUPS.IsEnabled = true;
             }
         }
 
-        private int calculateAtBatsByLineup(Dictionary<int, int> stats, Lineup lineup)
+        private int calculateAtBatsByLineup(Dictionary<int, int> stats, LineupData lineup)
         {
+            if (stats.Count == 0) return 0;
+
             int fromLevel = lineup.BalanceItemFrom.Value;
             int toLevel = lineup.BalanceItemTo.Value;
             int totalAtBats = 0;
@@ -254,18 +195,10 @@ namespace LIneupUsageEstimator
             return label;
         }
 
-        private ComboBox BuildPlayerPostitionBox( int col, POSITIONS row, Lineup lineup)
+        private ComboBox BuildPlayerPostitionBox( int col, POSITIONS postion, LineupDataObj lineup, List<Player> players)
         {
             ComboBox playerBox = new ComboBox();
             playerBox.Items.Add("NOT SET");
-     /*       if (players != null)
-            {
-                foreach (Player player in players)
-                {
-
-                }
-            }
-            */
             playerBox.FontSize = 12;
             playerBox.FontWeight = FontWeights.Normal;
             playerBox.Foreground = new SolidColorBrush(Colors.Green);
@@ -273,22 +206,31 @@ namespace LIneupUsageEstimator
             playerBox.SelectedIndex = 0;
             playerBox.SelectionChanged += lineup_player_SelectionChanged;
             playerBox.SetValue(dp, lineup);
-            playerBox.SetValue(dpPos, new PositionObj(row));
-            Grid.SetRow(playerBox, (int)row);
+            playerBox.SetValue(dpPos, new PositionObj(postion));
+
+            addPlayersByPosition(playerBox, players, postion, lineup.EstimatedAtBats);
+
+            Grid.SetRow(playerBox, (int)postion);
             Grid.SetColumn(playerBox, col);
-            if( col == 1)
-                lhControl[row] = playerBox;
             return playerBox;
         }
 
-        private Label createColumn(String text, int column, double width)
+        private void createColumn(LineupDataObj lineup, int columnIndex, double width)
+        {
+            String text = lineup.ToString() + " (" + lineup.EstimatedAtBats + ")";
+            ColumnDefinition col = createColumn(text, columnIndex, width);
+            col.SetValue(dp, lineup);
+
+        }
+
+        private ColumnDefinition createColumn(String text, int columnIndex, double width)
         {
             ColumnDefinition colLabels = new ColumnDefinition();
             colLabels.Width = new GridLength(width);
             GRID.ColumnDefinitions.Add(colLabels);
-            Label lineup = BuildColumnTextBox(text, column);
-            GRID.Children.Add(lineup);
-            return lineup;
+            Label column = BuildColumnTextBox(text, columnIndex);
+            GRID.Children.Add(column);
+            return colLabels;
         }
 
         private String buildBatterInfo(Player player)
@@ -305,16 +247,13 @@ namespace LIneupUsageEstimator
             return text;
         }
 
-
-        private void addPlayersByPosition(List<Player> players, POSITIONS position, int estimatedAB)
+        private void addPlayersByPosition(ComboBox box, List<Player> players, POSITIONS position, int estimatedAB)
         {
             foreach( Player player in players)
             {
                 String defRating = playsPosition(player, position);
                 if (defRating.Length > 0 )
                 {
-                    ComboBox box = lhControl[position];
-                    ((Lineup)box.GetValue(dp)).EstimatedAtBats = estimatedAB;
                     DefenseComboBoxItem item = new DefenseComboBoxItem();
                     item.Value = player;
                     item.Text = defRating;
@@ -345,7 +284,6 @@ namespace LIneupUsageEstimator
                     return player.Def.RightFieldRating;
                 default:
                     return "*";
-
             }
         }
 
@@ -356,9 +294,40 @@ namespace LIneupUsageEstimator
             {
                 Team team = (Team)item;
 
-                LineupListDlg dlg = new LineupListDlg(team);
+                LineupListDlg dlg = new LineupListDlg(team, storedLineups[team.Abrv]);
+                if( dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.ApplyAsTemplate)
+                {
+                    List<Team> teams = teamReportFile.getTeams();
+                    foreach (Team otherTeam in teams)
+                    {
+                        if (team == otherTeam)
+                            continue;
+
+                        TeamLineup otherTeamLineup = LineupPersistence.lookupTeamLineup(storedLineups, otherTeam);
+                        dlg.applyConfigurationToAnotherTeam(otherTeamLineup);
+                        LineupPersistence.saveDatabase(storedLineups);
+                    }
+                    //Update the table!
+                    CB_LIST_OF_TEAMS_SelectionChanged(this, null);
+                }
+            }
+        }
+
+        private void BTN_OPPONENTS_Click(object sender, RoutedEventArgs e)
+        {
+            Object item = CB_LIST_OF_TEAMS.SelectedItem;
+            if (item is Team)
+            {
+                Team team = (Team)item;
+
+                LineupListDlg dlg = new LineupListDlg(team, storedLineups[team.Abrv]);
                 dlg.ShowDialog();
             }
+        }
+
+        private void LineupUsageCalculator_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            LineupPersistence.saveDatabase(storedLineups);
         }
     }
 
@@ -392,6 +361,5 @@ namespace LIneupUsageEstimator
         {
             return Position.ToString();
         }
-
     }
 }

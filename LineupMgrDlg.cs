@@ -14,10 +14,23 @@ namespace LIneupUsageEstimator
     {
         List<LineupBalanceItem> balanceItems = new List<LineupBalanceItem>();
 
-        public Lineup WorkingLineup { get; set; }
+        public LineupDataObj WorkingLineup { get; set; }
 
         public LineupMgrDlg() : this(false) 
         {
+        }
+
+        public LineupMgrDlg(LineupDataObj originalData) : this(false)
+        {
+            WorkingLineup = originalData;
+
+            String s= WorkingLineup.BalanceItemFrom.ToString();
+            int i = CB_FROM.FindString(s);
+            CB_FROM.SelectedIndex = i;
+            CB_TO.SelectedItem = WorkingLineup.BalanceItemTo;
+            radioButtonLH.Checked = WorkingLineup.PitcherArm.Equals("L");
+            radioButtonRH.Checked = !WorkingLineup.PitcherArm.Equals("L");
+            updateLabel();
         }
 
         public LineupMgrDlg(Boolean testMode)
@@ -27,7 +40,7 @@ namespace LIneupUsageEstimator
                 InitializeComponent();
             }
 
-            WorkingLineup = new Lineup();
+            WorkingLineup = new LineupDataObj();
 
             balanceItems.Add(new LineupBalanceItem(0, 9, "L"));
             balanceItems.Add(new LineupBalanceItem(1, 8, "L"));
@@ -48,12 +61,13 @@ namespace LIneupUsageEstimator
             balanceItems.Add(new LineupBalanceItem(16, 7, "R"));
             balanceItems.Add(new LineupBalanceItem(17, 8, "R"));
             balanceItems.Add(new LineupBalanceItem(18, 9, "R"));
+
+            populateComboBoxes(CB_FROM, CB_TO, null);
         }
 
 
         private void LineupMgrDlg_Load(object sender, EventArgs e)
         {
-            populateComboBoxes(CB_FROM, CB_TO, null);
         }
 
         private void updateLabel()
@@ -62,20 +76,7 @@ namespace LIneupUsageEstimator
 
             if (CB_FROM.SelectedItem != null && CB_TO.SelectedItem != null)
             {
-                /*
-                WorkingLineup.PitcherArm = handed;
-                WorkingLineup.StartBalanceLevel = calculateLevelValue(CB_FROM);
-                if (CB_FROM.SelectedItem.Equals("E"))
-                    WorkingLineup.StartBalanceArm = "E";
-                else
-                    WorkingLineup.StartBalanceArm = CB_FROM.SelectedItem.ToString().Substring(1, 1);
-                WorkingLineup.EndBalanceLevel = calculateLevelValue(CB_TO);
-                if(CB_TO.SelectedItem.Equals("E"))
-                    WorkingLineup.EndBalanceArm = "E";
-                else
-                    WorkingLineup.EndBalanceArm = CB_TO.SelectedItem.ToString().Substring(1, 1);
-                    */
-                this.LABEL_LINEUP_NAME.Text = WorkingLineup.ToString();
+                this.LABEL_LINEUP_NAME.Text = handed + " " + ((LineupBalanceItem)CB_FROM.SelectedItem).ToString() + "-" + ((LineupBalanceItem)CB_TO.SelectedItem).ToString();
             }
         }
 
@@ -168,12 +169,13 @@ namespace LIneupUsageEstimator
 
         private void BTN_SAVE_Click(object sender, EventArgs e)
         {
-            if( ((LineupBalanceItem)CB_FROM.SelectedItem).Value > ((LineupBalanceItem)CB_TO.SelectedItem).Value)
+            if(CB_FROM.SelectedItem == null || CB_TO.SelectedItem == null ||
+                ((LineupBalanceItem)CB_FROM.SelectedItem).Value > ((LineupBalanceItem)CB_TO.SelectedItem).Value)
             {
                 MessageBox.Show("FROM Selection must be less than or equal to the TO Selection");
                 return;
             }
-            WorkingLineup = new Lineup();
+            WorkingLineup = new LineupDataObj();
             WorkingLineup.BalanceItemFrom = (LineupBalanceItem)CB_FROM.SelectedItem;
             WorkingLineup.BalanceItemTo = (LineupBalanceItem)CB_TO.SelectedItem;
             WorkingLineup.PitcherArm = radioButtonLH.Checked ? "L" : "R";

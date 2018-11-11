@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace LIneupUsageEstimator
 {
+    [Serializable()]
     public class LineupBalanceItem
     {
 

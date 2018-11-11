@@ -34,6 +34,7 @@
             this.BTN_SAVE = new System.Windows.Forms.Button();
             this.BTN_CANCEL = new System.Windows.Forms.Button();
             this.BTN_EDIT = new System.Windows.Forms.Button();
+            this.useAsTemplate = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBox1
@@ -86,6 +87,7 @@
             this.BTN_CANCEL.TabIndex = 25;
             this.BTN_CANCEL.Text = "CANCEL";
             this.BTN_CANCEL.UseVisualStyleBackColor = true;
+            this.BTN_CANCEL.Visible = false;
             this.BTN_CANCEL.Click += new System.EventHandler(this.BTN_CANCEL_Click);
             // 
             // BTN_EDIT
@@ -98,11 +100,22 @@
             this.BTN_EDIT.UseVisualStyleBackColor = true;
             this.BTN_EDIT.Click += new System.EventHandler(this.BTN_EDIT_Click);
             // 
+            // useAsTemplate
+            // 
+            this.useAsTemplate.Location = new System.Drawing.Point(67, 315);
+            this.useAsTemplate.Name = "useAsTemplate";
+            this.useAsTemplate.Size = new System.Drawing.Size(200, 33);
+            this.useAsTemplate.TabIndex = 27;
+            this.useAsTemplate.Text = "Apply template for all teams";
+            this.useAsTemplate.UseVisualStyleBackColor = true;
+            this.useAsTemplate.Click += new System.EventHandler(this.useAsTemplate_Click);
+            // 
             // LineupListDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(348, 450);
+            this.Controls.Add(this.useAsTemplate);
             this.Controls.Add(this.BTN_EDIT);
             this.Controls.Add(this.BTN_CANCEL);
             this.Controls.Add(this.BTN_SAVE);
@@ -124,5 +137,6 @@
         private System.Windows.Forms.Button BTN_SAVE;
         private System.Windows.Forms.Button BTN_CANCEL;
         private System.Windows.Forms.Button BTN_EDIT;
+        private System.Windows.Forms.Button useAsTemplate;
     }
 }
