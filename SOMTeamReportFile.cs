@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using somReporter.team;
+using LIneupUsageEstimator;
 
 namespace somReporter
 {
@@ -18,8 +20,20 @@ namespace somReporter
         {
             m_fileName = reportPath;
             if (!File.Exists(m_fileName))
+            {
+                MessageBox.Show(null,
+                    "Unable to find the League Roster Report file at " + reportPath + ".\r\nTo create the file, generate a single 'Roster Report' from the `League` menu of the SOM Baseball game.  Be sure to select `Each Team` and save the file to the above location by Selecting `Print to File` from the `File` menu.",
+                    "Unable to find League Roster Report",MessageBoxButtons.OK,MessageBoxIcon.Error);
                 throw new Exception("File " + reportPath + " cannot be found");
+            }
 
+        }
+
+        //initialWithTestData
+        public SOMTeamReportFile(Dictionary<String, List<Player>> pitcherDataByBalance, Dictionary<Team, List<Player>> pitcherDataByTeam)
+        {
+            this.pitcherDataByBalance = pitcherDataByBalance;
+            this.pitcherDataByTeam = pitcherDataByTeam;
         }
 
         public void parse()
@@ -99,11 +113,11 @@ namespace somReporter
         {
             Regex regex = new Regex(@"^([0-9]+) (.{1,18})");
             Regex regexPitcherLine = new Regex(@"^(.{1,22}) [0-9]+ +[0-9]+ +[0-9]+ +([A-Z]+) +([RL]) {1,6}([0-9 ])");
-            Regex regexPitcherBalLine = new Regex(@"^(.{1,17})[0-9]+ +([0-9ERL]+) +[0-9]+ +[0-9]+ +[0-9.]+ +([0-9]+) +([0-9]+) +[0-9]+ +[0-9]+ +[0-9]+ +([0-9]+) +[0-9]+");
+            Regex regexPitcherBalLine = new Regex(@"^(.{1,17})[0-9]+ +([0-9ERL]+) +[0-9]+ +[0-9]+ +[0-9.]+ +([0-9]+) +([0-9]+) +[0-9]+ +[0-9]+ +[0-9]+ +([0-9]+) +([0-9]+)");
             Regex regexBaterLine = new Regex(@"^(.{1,17}) +[0-9]+ +[0-9] +[0-9]+ +([A-Z]+) +([0-9ERL]+) +([0-9]+)");
             Regex regexBaterBalanceLine = new Regex(@"^(.{1,16}) +[0-9]+ +([NW])\/([NW]) +([LRS])");
 
-            String currentTeam = "";
+            Team currentTeam;
             bool inPitcherBalanceSection = false;
             bool inPitcherSection = false;
             bool inBatterSection = false;
@@ -124,13 +138,13 @@ namespace somReporter
                     String thisTeam = isTeamNameLineOfReport(line);
                     if (thisTeam != null)
                     {
-                        Console.Out.WriteLine("Finished reading " + currentTeam);
-                        currentTeam = thisTeam;
                         inPitcherBalanceSection = false;
                         inPitcherSection = false;
-                        if (team != null) { 
+                        if (team != null) {
+                            Console.Out.WriteLine("Finished reading " + team);
                             pitcherDataByTeam.Add(team, pitchers);
                             batterDataByTeam.Add(team, batters);
+                            team = null;
                         }
                         pitchers = new List<Player>();
                         batters = new List<Player>();
@@ -139,6 +153,8 @@ namespace somReporter
                         team = new Team("", 0);
                         teams.Add(team);
                         team.Name = thisTeam;
+                        team.Abrv = Team.prettyTeamName(thisTeam);
+                        currentTeam = team;
                     }
                 }
                 if( !inBatterSection )
@@ -184,13 +200,13 @@ namespace somReporter
                             throw new Exception("Expecting Yeam, Team and Text");
                         Player player = new Player();
                         player.Name = matchB.Groups[1].Value.Trim();
-                        if (team.Abrv.Length == 0)
-                            team.Abrv = matchB.Groups[2].Value.Trim();
+            //            if (team.Abrv.Length == 0)
+           //                 team.Abrv = matchB.Groups[2].Value.Trim();
                         player.IsHitter = true;
                         player.Bal = matchB.Groups[3].Value.Trim();
                         player.Actual = Int32.Parse(matchB.Groups[4].Value.Trim());
                         batters.Add(player);
-                        Console.Out.WriteLine("   inBatterSection " + currentTeam);
+                        Console.Out.WriteLine("   inBatterSection " );
                     }
                 }
                 else if(inBatterBalanceSection )
@@ -212,7 +228,7 @@ namespace somReporter
                         player.Throws = matchBB.Groups[4].Value.Trim();
 
                         batterIndex++;
-                        Console.Out.WriteLine("   inBatterBalanceSection " + currentTeam);
+                        Console.Out.WriteLine("   inBatterBalanceSection " );
                     }
                 }
                 else if (inPitcherSection)
@@ -233,7 +249,7 @@ namespace somReporter
                         if(spRating.Length > 0)
                             player.Games = Int32.Parse(spRating);
                         pitchers.Add(player);
-                        Console.Out.WriteLine("   inPitcherSection " + currentTeam);
+                        Console.Out.WriteLine("   inPitcherSection " );
                     }
                 }
                 else if (inPitcherBalanceSection)
@@ -241,8 +257,6 @@ namespace somReporter
                     Match matchPB = regexPitcherBalLine.Match(line);
                     if (matchPB.Success)
                     {
-                        if (matchPB.Groups.Count != 6)
-                            throw new Exception("Expecting Yeam, Team and Text");
                         Player player = pitchers[pitcherIndex];
                         String name = matchPB.Groups[1].Value.Trim();
                         if ( !player.Name.EndsWith(name))
@@ -255,6 +269,7 @@ namespace somReporter
 
                         player.Hits = Int32.Parse(matchPB.Groups[4].Value.Trim());
                         player.GS = Int32.Parse(matchPB.Groups[5].Value.Trim());
+                        player.SAVE = Int32.Parse(matchPB.Groups[6].Value.Trim());
                         pitcherIndex++;
                     }
                 }
@@ -321,9 +336,17 @@ namespace somReporter
             }
         }
 
-        private Dictionary<String, List<Player>> organizePitcherByBalance(Dictionary<Team, List<Player>> data)
+        public static Dictionary<String, List<Player>> organizePitcherByBalance(Dictionary<Team, List<Player>> data)
         {
             Dictionary<String, List<Player>> balance = new Dictionary<String, List<Player>>();
+
+            // First initialize the 
+            String[] types = { "9L", "8L", "7L", "6L", "5L", "4L", "3L", "2L", "1L", "E", "1R", "2R", "3R", "4R", "5R", "6R", "7R", "8R", "9R" };
+            foreach( String type in types)
+            {
+                balance.Add(type, new List<Player>());
+            }
+
             foreach (Team team in data.Keys)
             {
                 List<Player> pitchers = data[team];
@@ -340,41 +363,23 @@ namespace somReporter
             return balance;
         }
 
-        /*
-        private Report loadReport()
-        {
-           return new TeamRosterReport(reportTitle);
-        }
-        */
-        /*
-        public List<String> readReportLines()
-        {
-            List<String> lines = new List<String>();
-            System.IO.StreamReader file = null;
-            try
-            {
-                string line;
 
-                // Read the file and display it line by line.
-                file = new System.IO.StreamReader(m_fileName);
-                while ((line = file.ReadLine()) != null)
-                {
-                    line = cleanUpLine(line);
-                    if (line.Trim().Length == 0)
-                        continue;
-                    if (lines.Count == 0)
-                        parseFirstLineOfReport(line);
-                    lines.Add(line);
-                }
-            }
-            finally
+        public static int calculateAtBatsByLineup(Dictionary<int, int> stats, LineupData lineup)
+        {
+            if (stats.Count == 0) return 0;
+
+            int fromLevel = lineup.BalanceItemFrom.Value;
+            int toLevel = lineup.BalanceItemTo.Value;
+            int totalAtBats = 0;
+
+            for (int i = fromLevel; i <= toLevel; i++)
             {
-                if (file != null)
-                    file.Close();
+                totalAtBats += stats[i];
             }
-            return lines;
+
+            return totalAtBats;
         }
-        */
+
         public List<String> readFileLinesOnly(Boolean cleanup)
         {
             List<String> lines = new List<String>();

@@ -26,6 +26,10 @@ namespace LIneupUsageEstimator
         public static DependencyProperty dp;
         public static DependencyProperty dpPos;
 
+        TeamInfo teamLineupData = null;
+
+        List<Team> completeListOfTeams = null;
+
         private Dictionary<String, TeamLineup> storedLineups;
 
         public MainWindow()
@@ -44,12 +48,25 @@ namespace LIneupUsageEstimator
 
             teamReportFile = new SOMTeamReportFile(Config.getConfigurationFile("rosterReport.PRT"));
             teamReportFile.parse();
-            
-            List<Team> teams = teamReportFile.getTeams();
+
+            completeListOfTeams = teamReportFile.getTeams();
             CB_LIST_OF_TEAMS.Items.Add("SELECT ONE");
-            foreach (Team team in teams)
+            foreach (Team team in completeListOfTeams)
                 CB_LIST_OF_TEAMS.Items.Add(team);
             CB_LIST_OF_TEAMS.SelectedIndex = 0;
+
+            teamLineupData = TeamInformation.loadDatabase();
+            if (teamLineupData.hasEmptyData())
+            {
+                MessageBox.Show("It appears this is the first time you have run the program. Team division assignments are required in order to estimate the number of games played vs each team.  On the next screen please assign each team a division.",
+                    "Team division assignments are required", MessageBoxButton.OK, MessageBoxImage.Information);
+                OpponentsDlg dlg = new OpponentsDlg(teamLineupData, completeListOfTeams);
+                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.Cancel)
+                {
+                    this.Close();
+                }
+                TeamInformation.saveDatabase(teamLineupData);
+            }
 
             GRID.Background = new SolidColorBrush(Colors.LightSteelBlue);
             GRID.ShowGridLines = true;
@@ -145,7 +162,8 @@ namespace LIneupUsageEstimator
 
                     List<Player> players = teamReportFile.getTeamBatters(team);
                     batterInfo.setPlayers(players);
-                    balanceAtBats = balanceUsage.buildTable(teamReportFile, team);
+                    IUsageCalculator calculator = CalculatorFactory.getCalculator(CalculatorFactory.CalculatorType.BASIC, teamReportFile, team);
+                    balanceAtBats = balanceUsage.buildTable(calculator);
 
                     updateWorkbook(team, players);
                 }
@@ -315,13 +333,10 @@ namespace LIneupUsageEstimator
 
         private void BTN_OPPONENTS_Click(object sender, RoutedEventArgs e)
         {
-            Object item = CB_LIST_OF_TEAMS.SelectedItem;
-            if (item is Team)
+            OpponentsDlg dlg = new OpponentsDlg(teamLineupData, this.completeListOfTeams);
+            if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                Team team = (Team)item;
-
-                LineupListDlg dlg = new LineupListDlg(team, storedLineups[team.Abrv]);
-                dlg.ShowDialog();
+                TeamInformation.saveDatabase(teamLineupData);
             }
         }
 

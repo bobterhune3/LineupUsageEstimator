@@ -11,7 +11,7 @@ using System.Windows.Media;
 
 namespace LIneupUsageEstimator
 {
-    abstract class StaticColumnControlBase
+    public abstract class StaticColumnControlBase
     {
 
         protected void createColumn(Grid grid, String text, int column, double width)
@@ -38,9 +38,11 @@ namespace LIneupUsageEstimator
 
         protected void clearInfoTable(Grid grid)
         {
-            for (int i = grid.Children.Count - 1; i >= grid.ColumnDefinitions.Count; i--)
-            {
-                grid.Children.Remove(grid.Children[i]);
+            if (grid != null) { 
+                for (int i = grid.Children.Count - 1; i >= grid.ColumnDefinitions.Count; i--)
+                {
+                    grid.Children.Remove(grid.Children[i]);
+                }
             }
         }
     }

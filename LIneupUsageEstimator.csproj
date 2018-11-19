@@ -52,9 +52,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -62,6 +62,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BalanceUsageStats.cs" />
+    <Compile Include="calculators\CalculatorFactory.cs" />
+    <Compile Include="calculators\IUsageCalculator.cs" />
+    <Compile Include="calculators\StartingPitcherOnlyCalculator.cs" />
     <Compile Include="LineupDataObj.cs" />
     <Compile Include="LineupListDlg.cs">
       <SubType>Form</SubType>
@@ -76,13 +79,22 @@
       <DependentUpon>LineupMgrDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="LineupBalanceItem.cs" />
+    <Compile Include="OpponentsDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OpponentsDlg.Designer.cs">
+      <DependentUpon>OpponentsDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="reports\TeamRosterReport.cs" />
     <Compile Include="SOMTeamReportFile.cs" />
     <Compile Include="StaticColumnControlBase.cs" />
     <Compile Include="storage\LineupPersistence.cs" />
+    <Compile Include="storage\TeamInfo.cs" />
+    <Compile Include="storage\TeamInformation.cs" />
     <Compile Include="storage\TeamLineup.cs" />
     <Compile Include="TeamBatterInfo.cs" />
     <Compile Include="util\Config.cs" />
+    <Compile Include="util\LineupTools.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -115,6 +127,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LineupMgrDlg.resx">
       <DependentUpon>LineupMgrDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="OpponentsDlg.resx">
+      <DependentUpon>OpponentsDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
