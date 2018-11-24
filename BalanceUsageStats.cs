@@ -30,11 +30,6 @@ namespace LIneupUsageEstimator
             InfoGrid.RowDefinitions.Add(row);
         }
 
-        public BalanceUsageStats()
-        {
-
-        }
-
         public List<Dictionary<int, int>> buildTable(IUsageCalculator calculator)
         {
             if (InfoGrid != null)

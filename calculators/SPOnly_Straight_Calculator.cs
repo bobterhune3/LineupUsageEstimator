@@ -5,12 +5,13 @@ using somReporter.team;
 
 namespace LIneupUsageEstimator
 {
-    class StartingPitcherOnlyCalculator : IUsageCalculator
+    class SPOnly_Straight_Calculator : IUsageCalculator
     {
         private SOMTeamReportFile teamReportFile;
         private Team targetTeam;
+        private int targetAtBats;
 
-        public StartingPitcherOnlyCalculator(SOMTeamReportFile teamReportFile, Team targetTeam)
+        public SPOnly_Straight_Calculator(SOMTeamReportFile teamReportFile, Team targetTeam)
         {
             this.teamReportFile = teamReportFile;
             this.targetTeam = targetTeam;
@@ -19,6 +20,12 @@ namespace LIneupUsageEstimator
         public List<Dictionary<int, int>> calculate()
         {
             return calculate(null);
+        }
+
+        public void setOptions(String key, Object value)
+        {
+            if (key.Equals(CalculatorOptions.OPTION_TARGET_AT_BAT))
+                targetAtBats = (int)value;
         }
 
         public List<Dictionary<int, int>> calculate(Func<int, String, int, int, int, int, int> createRowFunc)
@@ -78,7 +85,8 @@ namespace LIneupUsageEstimator
             float ip = (float)ip_for_balance;
             float total = (float)totalIP;
 
-            int value = Convert.ToInt32((ip / total) * 615);
+            // Always Round up
+            int value = Convert.ToInt32(Math.Ceiling((ip / total) * targetAtBats));
             return value;
         }
     }

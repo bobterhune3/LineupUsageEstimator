@@ -34,6 +34,8 @@ namespace somReporter
         {
             this.pitcherDataByBalance = pitcherDataByBalance;
             this.pitcherDataByTeam = pitcherDataByTeam;
+            foreach (Team team in pitcherDataByTeam.Keys)
+                this.teams.Add(team);
         }
 
         public void parse()
@@ -360,6 +362,43 @@ namespace somReporter
 
                 }
             }
+            return balance;
+        }
+
+        public Dictionary<String, int> getTeamBalanceCount(String pitcherArm, List<Player> pitchers, double percentage)
+        {
+            Dictionary<String, int> workingBalance = new Dictionary<string, int>();
+
+            // First initialize the 
+            String[] types = { "9L", "8L", "7L", "6L", "5L", "4L", "3L", "2L", "1L", "E", "1R", "2R", "3R", "4R", "5R", "6R", "7R", "8R", "9R" };
+            foreach (String type in types)
+            {
+                workingBalance.Add(type, 0);
+            }
+
+            foreach (Player pitcher in pitchers)
+            {
+                if (pitcher.Throws.Equals(pitcherArm) && pitcher.GS > 3)
+                {
+                    String bal = pitcher.Bal;
+                    int ipCount = workingBalance[bal];
+                    workingBalance[bal] = ipCount + pitcher.IP;
+                }
+            }
+            Dictionary<String, int> balance = new Dictionary<string, int>();
+            //Adjust for percenrage
+            if (percentage > 0)
+            {
+                foreach (String bal in workingBalance.Keys)
+                {
+                    int ipCount = workingBalance[bal];
+                    int adjustedIP = (int)(ipCount * percentage);
+                    balance[bal] = adjustedIP;
+                }
+            }
+            else
+                balance = workingBalance;
+
             return balance;
         }
 

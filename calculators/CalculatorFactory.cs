@@ -9,14 +9,16 @@ namespace LIneupUsageEstimator
 {
     public class CalculatorFactory
     {
-        public enum CalculatorType { BASIC };
+        public enum CalculatorType { SP_BASIC, SP_SCHEDULE };
 
         public static IUsageCalculator getCalculator(CalculatorType type, SOMTeamReportFile teamReportFile, Team targetTeam)
         {
-            if (type == CalculatorType.BASIC)
-                return new StartingPitcherOnlyCalculator(teamReportFile, targetTeam);
-            else
-                throw new Exception("Unimplemented Calculator Type Requested");
+            if (type == CalculatorType.SP_BASIC)
+                return new SPOnly_Straight_Calculator(teamReportFile, targetTeam);
+            else if(type == CalculatorType.SP_SCHEDULE)
+                return new SPOnly_ScheduleWeighted_Calculator(teamReportFile, targetTeam);
+
+            throw new Exception("Unimplemented Calculator Type Requested");
         }
     }
 }

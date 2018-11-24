@@ -15,6 +15,7 @@ namespace LIneupUsageEstimator
     /// </summary>
     public partial class MainWindow : Window
     {
+        private CalculatorFactory.CalculatorType USAGE_CALCULATOR = CalculatorFactory.CalculatorType.SP_SCHEDULE;
         private SOMTeamReportFile teamReportFile;
         public enum POSITIONS { CATCHER = 1, FIRSTBASE, SECONDBASE, THIRDBASE, SHORTSTOP, LEFTFIELD, CENTERFIELD, RIGHTFIELD, DH };
         private Boolean dialogInitialized = false;
@@ -68,6 +69,8 @@ namespace LIneupUsageEstimator
                 TeamInformation.saveDatabase(teamLineupData);
             }
 
+            applyDivisionToTeams();
+
             GRID.Background = new SolidColorBrush(Colors.LightSteelBlue);
             GRID.ShowGridLines = true;
 
@@ -76,6 +79,20 @@ namespace LIneupUsageEstimator
             batterInfo = new TeamBatterInfo(GRID_INFO, GRID);
             balanceUsage = new BalanceUsageStats(GRID_USAGE_STATS);
         }
+
+        private void applyDivisionToTeams()
+        {
+            foreach( Team teamDB in teamLineupData.Team)
+            {
+                foreach( Team teamFile in completeListOfTeams)
+                {
+                    if (teamDB.Abrv.Equals(teamFile.Abrv))
+                        teamFile.Division = teamDB.Division;
+                }
+
+            }
+        }
+
 
         private void updateWorkbook(Team team, List<Player> players)
         {
@@ -162,7 +179,12 @@ namespace LIneupUsageEstimator
 
                     List<Player> players = teamReportFile.getTeamBatters(team);
                     batterInfo.setPlayers(players);
-                    IUsageCalculator calculator = CalculatorFactory.getCalculator(CalculatorFactory.CalculatorType.BASIC, teamReportFile, team);
+                    IUsageCalculator calculator = CalculatorFactory.getCalculator(USAGE_CALCULATOR, teamReportFile, team);
+                    calculator.setOptions(CalculatorOptions.OPTION_IN_DIVISION_GAMES, teamLineupData.InDivisionGameCount);
+                    calculator.setOptions(CalculatorOptions.OPTION_OUT_DIVISION_GAMES, teamLineupData.OutofDivisionGameCount);
+                    //TODO: Add UI element for Target At Bats
+                    calculator.setOptions(CalculatorOptions.OPTION_TARGET_AT_BAT, 615); 
+                    
                     balanceAtBats = balanceUsage.buildTable(calculator);
 
                     updateWorkbook(team, players);
