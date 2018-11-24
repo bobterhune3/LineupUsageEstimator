@@ -9,7 +9,7 @@ namespace LIneupUsageEstimator
     {
         private SOMTeamReportFile teamReportFile;
         private Team targetTeam;
-        private int targetAtBats;
+        private int targetAtBats = 615;
 
         public SPOnly_Straight_Calculator(SOMTeamReportFile teamReportFile, Team targetTeam)
         {
@@ -36,8 +36,6 @@ namespace LIneupUsageEstimator
             int rowCount = 1;
             int totalStarterIP = teamReportFile.getTotalStarterIP(targetTeam);
             int totalPitcherIP = teamReportFile.getTotalPitcherIP();
-
-
 
             foreach (String type in types)
             {
