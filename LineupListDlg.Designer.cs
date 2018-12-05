@@ -35,6 +35,8 @@
             this.BTN_CANCEL = new System.Windows.Forms.Button();
             this.BTN_EDIT = new System.Windows.Forms.Button();
             this.useAsTemplate = new System.Windows.Forms.Button();
+            this.btnMoveUp = new System.Windows.Forms.Button();
+            this.btnMoveDown = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // listBox1
@@ -46,6 +48,8 @@
             this.listBox1.Size = new System.Drawing.Size(201, 244);
             this.listBox1.TabIndex = 0;
             this.listBox1.Click += new System.EventHandler(this.listBox1_Click);
+            this.listBox1.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.listBox1.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
             // 
             // BTN_ADD
             // 
@@ -110,11 +114,35 @@
             this.useAsTemplate.UseVisualStyleBackColor = true;
             this.useAsTemplate.Click += new System.EventHandler(this.useAsTemplate_Click);
             // 
+            // btnMoveUp
+            // 
+            this.btnMoveUp.Enabled = false;
+            this.btnMoveUp.Location = new System.Drawing.Point(274, 94);
+            this.btnMoveUp.Name = "btnMoveUp";
+            this.btnMoveUp.Size = new System.Drawing.Size(38, 23);
+            this.btnMoveUp.TabIndex = 28;
+            this.btnMoveUp.Text = "+";
+            this.btnMoveUp.UseVisualStyleBackColor = true;
+            this.btnMoveUp.Click += new System.EventHandler(this.btnMoveUp_Click);
+            // 
+            // btnMoveDown
+            // 
+            this.btnMoveDown.Enabled = false;
+            this.btnMoveDown.Location = new System.Drawing.Point(274, 123);
+            this.btnMoveDown.Name = "btnMoveDown";
+            this.btnMoveDown.Size = new System.Drawing.Size(38, 23);
+            this.btnMoveDown.TabIndex = 29;
+            this.btnMoveDown.Text = "-";
+            this.btnMoveDown.UseVisualStyleBackColor = true;
+            this.btnMoveDown.Click += new System.EventHandler(this.btnMoveDown_Click);
+            // 
             // LineupListDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(348, 450);
+            this.Controls.Add(this.btnMoveDown);
+            this.Controls.Add(this.btnMoveUp);
             this.Controls.Add(this.useAsTemplate);
             this.Controls.Add(this.BTN_EDIT);
             this.Controls.Add(this.BTN_CANCEL);
@@ -138,5 +166,7 @@
         private System.Windows.Forms.Button BTN_CANCEL;
         private System.Windows.Forms.Button BTN_EDIT;
         private System.Windows.Forms.Button useAsTemplate;
+        private System.Windows.Forms.Button btnMoveUp;
+        private System.Windows.Forms.Button btnMoveDown;
     }
 }

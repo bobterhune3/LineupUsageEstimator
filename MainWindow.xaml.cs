@@ -335,7 +335,8 @@ namespace LIneupUsageEstimator
                 Team team = (Team)item;
 
                 LineupListDlg dlg = new LineupListDlg(team, storedLineups[team.Abrv]);
-                if( dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.ApplyAsTemplate)
+                System.Windows.Forms.DialogResult result = dlg.ShowDialog();
+                if (result == System.Windows.Forms.DialogResult.OK && dlg.ApplyAsTemplate)
                 {
                     List<Team> teams = teamReportFile.getTeams();
                     foreach (Team otherTeam in teams)
@@ -347,6 +348,11 @@ namespace LIneupUsageEstimator
                         dlg.applyConfigurationToAnotherTeam(otherTeamLineup);
                         LineupPersistence.saveDatabase(storedLineups);
                     }
+                    //Update the table!
+                    CB_LIST_OF_TEAMS_SelectionChanged(this, null);
+                }
+                else if(result == System.Windows.Forms.DialogResult.OK)
+                {
                     //Update the table!
                     CB_LIST_OF_TEAMS_SelectionChanged(this, null);
                 }

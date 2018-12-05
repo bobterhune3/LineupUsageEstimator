@@ -26,10 +26,13 @@ namespace LIneupUsageEstimator
             BTN_DELETE.Enabled = false;
             BTN_SAVE.Enabled = false;
             BTN_EDIT.Enabled = false;
+            int index = 0;
             foreach(LineupData data in storedLineups.Lineups)
             {
-                listBox1.Items.Add(new LineupDataObj(data));
+                LineupDataObj obj = new LineupDataObj(data);
+                listBox1.Items.Add(obj);
                 BTN_DELETE.Enabled = true;
+                index++;
             }
         }
 
@@ -92,9 +95,10 @@ namespace LIneupUsageEstimator
             LineupDataObj selected = (LineupDataObj)listBox1.SelectedItem;
             LineupMgrDlg dlg = new LineupMgrDlg(selected);
             if (dlg.ShowDialog(this) == DialogResult.OK) {
+                int index = listBox1.Items.IndexOf(selected);
                 listBox1.Items.Remove(selected);
                 selected = dlg.WorkingLineup;
-                listBox1.Items.Add(selected);
+                listBox1.Items.Insert(index, selected);
                 listBox1.Refresh();
                 BTN_SAVE.Enabled = true;
             }
@@ -111,6 +115,45 @@ namespace LIneupUsageEstimator
             {
                 ApplyAsTemplate = true;
             }
+        }
+
+        private void btnMoveUp_Click(object sender, EventArgs e)
+        {
+            LineupDataObj selected = (LineupDataObj)listBox1.SelectedItem;
+            int index = listBox1.Items.IndexOf(selected);
+            listBox1.Items.Remove(selected);
+            index = index - 1;
+            listBox1.Items.Insert(index, selected);
+            listBox1.Refresh();
+            listBox1.SelectedItem = selected;
+
+            btnMoveUp.Enabled = index > 0;
+        }
+
+        private void btnMoveDown_Click(object sender, EventArgs e)
+        {
+            LineupDataObj selected = (LineupDataObj)listBox1.SelectedItem;
+            int index = listBox1.Items.IndexOf(selected);
+            listBox1.Items.Remove(selected);
+            index = index + 1;
+            listBox1.Items.Insert(index, selected);
+            listBox1.Refresh();
+            listBox1.SelectedItem = selected;
+
+            btnMoveUp.Enabled = index > listBox1.Items.Count - 1;
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnMoveUp.Enabled = listBox1.SelectedIndex > 1;
+            btnMoveDown.Enabled = listBox1.SelectedIndex >= 0 && listBox1.SelectedIndex < listBox1.Items.Count - 1;
+        }
+
+        private void listBox1_DoubleClick(object sender, EventArgs e)
+        {
+            BTN_EDIT_Click(sender, e);
+            btnMoveUp.Enabled = listBox1.SelectedIndex > 1;
+            btnMoveDown.Enabled = listBox1.SelectedIndex >= 0 && listBox1.SelectedIndex < listBox1.Items.Count - 1;
         }
     }
 }
