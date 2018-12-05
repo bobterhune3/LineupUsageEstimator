@@ -62,11 +62,14 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BalanceUsageStats.cs" />
+    <Compile Include="calculators\CalculateColumnUtil.cs" />
     <Compile Include="calculators\CalculatorFactory.cs" />
     <Compile Include="calculators\CalculatorOptions.cs" />
     <Compile Include="calculators\IUsageCalculator.cs" />
+    <Compile Include="calculators\AllPitchers_ScheduleWeighted_Calculator.cs" />
     <Compile Include="calculators\SPOnly_ScheduleWeighted_Calculator.cs" />
     <Compile Include="calculators\SPOnly_Straight_Calculator.cs" />
+    <Compile Include="calculators\TeamPitchingProfile.cs" />
     <Compile Include="LineupDataObj.cs" />
     <Compile Include="LineupListDlg.cs">
       <SubType>Form</SubType>

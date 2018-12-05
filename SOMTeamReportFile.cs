@@ -23,7 +23,7 @@ namespace somReporter
             {
                 MessageBox.Show(null,
                     "Unable to find the League Roster Report file at " + reportPath + ".\r\nTo create the file, generate a single 'Roster Report' from the `League` menu of the SOM Baseball game.  Be sure to select `Each Team` and save the file to the above location by Selecting `Print to File` from the `File` menu.",
-                    "Unable to find League Roster Report",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                    "Unable to find League Roster Report", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new Exception("File " + reportPath + " cannot be found");
             }
 
@@ -56,7 +56,7 @@ namespace somReporter
         {
             int totalIP = 0;
             // First we need the total IP across all players
-            foreach ( String key in pitcherDataByBalance.Keys)
+            foreach (String key in pitcherDataByBalance.Keys)
             {
                 foreach (Player player in pitcherDataByBalance[key])
                 {
@@ -115,7 +115,7 @@ namespace somReporter
         {
             Regex regex = new Regex(@"^([0-9]+) (.{1,18})");
             Regex regexPitcherLine = new Regex(@"^(.{1,22}) [0-9]+ +[0-9]+ +[0-9]+ +([A-Z]+) +([RL]) {1,6}([0-9 ])");
-            Regex regexPitcherBalLine = new Regex(@"^(.{1,17})[0-9]+ +([0-9ERL]+) +[0-9]+ +[0-9]+ +[0-9.]+ +([0-9]+) +([0-9]+) +[0-9]+ +[0-9]+ +[0-9]+ +([0-9]+) +([0-9]+)");
+            Regex regexPitcherBalLine = new Regex(@"^(.{1,17})[0-9]+ +([0-9ERL]+) +[0-9]+ +[0-9]+ +[0-9.]+ +([0-9]+) +([0-9]+) +([0-9]+) +[0-9]+ +[0-9]+ +([0-9]+) +([0-9]+)");
             Regex regexBaterLine = new Regex(@"^(.{1,17}) +[0-9]+ +[0-9] +[0-9]+ +([A-Z]+) +([0-9ERL]+) +([0-9]+)");
             Regex regexBaterBalanceLine = new Regex(@"^(.{1,16}) +[0-9]+ +([NW])\/([NW]) +([LRS])");
 
@@ -159,11 +159,11 @@ namespace somReporter
                         currentTeam = team;
                     }
                 }
-                if( !inBatterSection )
+                if (!inBatterSection)
                 {
                     inBatterSection = line.Contains("CODES YEAR TEAM BAL  AB DO TR HR BAVG  BB K'S RBI  OB%");
                 }
-                if( !inBatterBalanceSection )
+                if (!inBatterBalanceSection)
                 {
                     inBatterBalanceSection = line.Contains("LEFT% POWER BAT STEAL BUNT H&R RUN");
                     if (inBatterBalanceSection)
@@ -172,7 +172,7 @@ namespace somReporter
                 if (!inPitcherBalanceSection)
                 {
                     inPitcherBalanceSection = line.Contains("LEFT% BAL WON LOST  ERA");
-                    if(inPitcherBalanceSection)
+                    if (inPitcherBalanceSection)
                         inPitcherSection = false;
                 }
                 if (!inPitcherSection)
@@ -183,7 +183,7 @@ namespace somReporter
                         inDefenseSection = false;
                     }
                 }
-                if(!inDefenseSection)
+                if (!inDefenseSection)
                 {
                     inDefenseSection = line.Contains("Catcher       1b   2b   3b   ss   lf   cf   rf   ARM");
                     if (inDefenseSection)
@@ -193,7 +193,7 @@ namespace somReporter
                     }
                 }
 
-                if ( inBatterSection)
+                if (inBatterSection)
                 {
                     Match matchB = regexBaterLine.Match(line);
                     if (matchB.Success)
@@ -202,16 +202,16 @@ namespace somReporter
                             throw new Exception("Expecting Yeam, Team and Text");
                         Player player = new Player();
                         player.Name = matchB.Groups[1].Value.Trim();
-            //            if (team.Abrv.Length == 0)
-           //                 team.Abrv = matchB.Groups[2].Value.Trim();
+                        //            if (team.Abrv.Length == 0)
+                        //                 team.Abrv = matchB.Groups[2].Value.Trim();
                         player.IsHitter = true;
                         player.Bal = matchB.Groups[3].Value.Trim();
                         player.Actual = Int32.Parse(matchB.Groups[4].Value.Trim());
                         batters.Add(player);
-                        Console.Out.WriteLine("   inBatterSection " );
+                        Console.Out.WriteLine("   inBatterSection ");
                     }
                 }
-                else if(inBatterBalanceSection )
+                else if (inBatterBalanceSection)
                 {
                     Match matchBB = regexBaterBalanceLine.Match(line);
                     if (matchBB.Success)
@@ -230,7 +230,7 @@ namespace somReporter
                         player.Throws = matchBB.Groups[4].Value.Trim();
 
                         batterIndex++;
-                        Console.Out.WriteLine("   inBatterBalanceSection " );
+                        Console.Out.WriteLine("   inBatterBalanceSection ");
                     }
                 }
                 else if (inPitcherSection)
@@ -242,16 +242,16 @@ namespace somReporter
                             throw new Exception("Expecting Yeam, Team and Text");
                         Player player = new Player();
                         player.Name = matchP.Groups[1].Value.Trim();
-                        if( team.Abrv.Length == 0)
+                        if (team.Abrv.Length == 0)
                             team.Abrv = matchP.Groups[2].Value.Trim();
                         player.Team = team;
                         player.IsHitter = false;
                         player.Throws = matchP.Groups[3].Value.Trim();
                         String spRating = matchP.Groups[4].Value.Trim();
-                        if(spRating.Length > 0)
+                        if (spRating.Length > 0)
                             player.Games = Int32.Parse(spRating);
                         pitchers.Add(player);
-                        Console.Out.WriteLine("   inPitcherSection " );
+                        Console.Out.WriteLine("   inPitcherSection ");
                     }
                 }
                 else if (inPitcherBalanceSection)
@@ -261,7 +261,7 @@ namespace somReporter
                     {
                         Player player = pitchers[pitcherIndex];
                         String name = matchPB.Groups[1].Value.Trim();
-                        if ( !player.Name.EndsWith(name))
+                        if (!player.Name.EndsWith(name))
                         {
                             Console.Out.WriteLine("ERROR: Pitcher Name not as expected " + player.Name + " != " + name);
                             continue;
@@ -270,8 +270,9 @@ namespace somReporter
                         player.IP = Int32.Parse(matchPB.Groups[3].Value.Trim());
 
                         player.Hits = Int32.Parse(matchPB.Groups[4].Value.Trim());
-                        player.GS = Int32.Parse(matchPB.Groups[5].Value.Trim());
-                        player.SAVE = Int32.Parse(matchPB.Groups[6].Value.Trim());
+                        player.BB = Int32.Parse(matchPB.Groups[5].Value.Trim());
+                        player.GS = Int32.Parse(matchPB.Groups[6].Value.Trim());
+                        player.SAVE = Int32.Parse(matchPB.Groups[7].Value.Trim());
                         pitcherIndex++;
                     }
                 }
@@ -281,7 +282,7 @@ namespace somReporter
                     {
                         String name = line.Substring(0, 16).Trim();
                         String catcher = line.Substring(17, 13).Trim();
-                        if(catcher.Length > 0 )
+                        if (catcher.Length > 0)
                         {  // strip off passball and throwing error stats
                             catcher = catcher.Substring(0, catcher.IndexOf('t'));
                         }
@@ -298,7 +299,7 @@ namespace somReporter
                         if (!player.Name.EndsWith(name))
                         {
                             // Sometimes the game strips off the last 1-3 characters in the report, so this checks for that.
-                            if (!player.Name.EndsWith(name.Substring(0, name.Length - 1)) && 
+                            if (!player.Name.EndsWith(name.Substring(0, name.Length - 1)) &&
                                 !player.Name.EndsWith(name.Substring(0, name.Length - 2)) &&
                                 !player.Name.EndsWith(name.Substring(0, name.Length - 3)))
                             {
@@ -320,19 +321,19 @@ namespace somReporter
 
         private void removeNonStartingPitchers(Dictionary<Team, List<Player>> data)
         {
-            foreach( Team team in data.Keys)
+            foreach (Team team in data.Keys)
             {
                 List<Player> pitchers = data[team];
                 List<Player> removes = new List<Player>();
-                foreach( Player pitcher in pitchers )
+                foreach (Player pitcher in pitchers)
                 {
                     int gs = pitcher.GS;
-                    if( gs == 0 )
+                    if (gs == 0)
                     {
                         removes.Add(pitcher);
                     }
                 }
-                foreach( Player remove in removes)
+                foreach (Player remove in removes)
                     pitchers.RemoveAll(item => item == remove);
                 return;
             }
@@ -344,7 +345,7 @@ namespace somReporter
 
             // First initialize the 
             String[] types = { "9L", "8L", "7L", "6L", "5L", "4L", "3L", "2L", "1L", "E", "1R", "2R", "3R", "4R", "5R", "6R", "7R", "8R", "9R" };
-            foreach( String type in types)
+            foreach (String type in types)
             {
                 balance.Add(type, new List<Player>());
             }
@@ -364,12 +365,18 @@ namespace somReporter
             }
             return balance;
         }
+/*
+        public Dictionary<String, int> getTeamBalanceCount(String pitcherArm, List<Player> pitchers)
+        {
+            return getTeamBalanceCount(pitcherArm, pitchers, false);
+        }
+*/
+        public enum PITCHER_TYPE { STARTER, RELIEF, CLOSER };
 
-        public Dictionary<String, int> getTeamBalanceCount(String pitcherArm, List<Player> pitchers, double percentage)
+        public Dictionary<String, int> getTeamBalanceCount(String pitcherArm, List<Player> pitchers)//, Boolean includeAllPitcherTypes)
         {
             Dictionary<String, int> workingBalance = new Dictionary<string, int>();
 
-            // First initialize the 
             String[] types = { "9L", "8L", "7L", "6L", "5L", "4L", "3L", "2L", "1L", "E", "1R", "2R", "3R", "4R", "5R", "6R", "7R", "8R", "9R" };
             foreach (String type in types)
             {
@@ -378,30 +385,41 @@ namespace somReporter
 
             foreach (Player pitcher in pitchers)
             {
-                if (pitcher.Throws.Equals(pitcherArm) && pitcher.GS > 3)
+                if (pitcher.Throws.Equals(pitcherArm))
                 {
-                    String bal = pitcher.Bal;
-                    int ipCount = workingBalance[bal];
-                    workingBalance[bal] = ipCount + pitcher.IP;
+                    if (pitcher.GS > 3)
+                    {
+                        String bal = pitcher.Bal;
+                        int ipCount = workingBalance[bal];
+                        //    int adjustedIP = adjustIPByPitcherType(pitcher, PITCHER_TYPE.STARTER);
+                        workingBalance[bal] += pitcher.IP;// + adjustedIP;
+                    }
+                    /*
+                    else if(includeAllPitcherTypes && pitcher.SAVE > 2 )
+                    {
+                        String bal = pitcher.Bal;
+                        int ipCount = workingBalance[bal];
+                        int adjustedIP = adjustIPByPitcherType( pitcher, PITCHER_TYPE.CLOSER);
+                        workingBalance[bal] = ipCount + adjustedIP;
+                    }
+                    else if(includeAllPitcherTypes){
+                        String bal = pitcher.Bal;
+                        int ipCount = workingBalance[bal];
+                        int adjustedIP = adjustIPByPitcherType( pitcher, PITCHER_TYPE.RELIEF);
+                        workingBalance[bal] = ipCount + adjustedIP;
+                    }
+                    */
                 }
             }
-            Dictionary<String, int> balance = new Dictionary<string, int>();
-            //Adjust for percenrage
-            if (percentage > 0)
-            {
-                foreach (String bal in workingBalance.Keys)
-                {
-                    int ipCount = workingBalance[bal];
-                    int adjustedIP = (int)(ipCount * percentage);
-                    balance[bal] = adjustedIP;
-                }
-            }
-            else
-                balance = workingBalance;
-
-            return balance;
+            return workingBalance;
         }
 
+        //TODO:
+   //     private int adjustIPByPitcherType(Player pitcher, PITCHER_TYPE pitcherType)
+    //    {
+    //        int adjustedIP = pitcher.IP;
+    //        return adjustedIP;
+    //    }
 
         public static int calculateAtBatsByLineup(Dictionary<int, int> stats, LineupData lineup)
         {

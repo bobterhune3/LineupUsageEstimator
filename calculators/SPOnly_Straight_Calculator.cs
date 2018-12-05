@@ -35,7 +35,7 @@ namespace LIneupUsageEstimator
             String[] types = { "9L", "8L", "7L", "6L", "5L", "4L", "3L", "2L", "1L", "E", "1R", "2R", "3R", "4R", "5R", "6R", "7R", "8R", "9R" };
             int rowCount = 1;
             int totalStarterIP = teamReportFile.getTotalStarterIP(targetTeam);
-            int totalPitcherIP = teamReportFile.getTotalPitcherIP();
+      //      int totalPitcherIP = teamReportFile.getTotalPitcherIP();
 
             foreach (String type in types)
             {
@@ -59,8 +59,8 @@ namespace LIneupUsageEstimator
                 }
 
                 // THIS BUILDS THE ESTIMATED BATTER AT BATS PER TYPE TABLE
-                int valueLAB = calculateColumn(ip_for_lefties, totalStarterIP);
-                int valueRAB = calculateColumn(ip_for_righties, totalStarterIP);
+                int valueLAB = CalculateColumnUtil.calculateColumn(ip_for_lefties, totalStarterIP);
+                int valueRAB = CalculateColumnUtil.calculateColumn(ip_for_righties, totalStarterIP);
 
                 if(createRowFunc != null )
                 {
@@ -76,16 +76,6 @@ namespace LIneupUsageEstimator
             returnValue.Add(balanceLefties);
             returnValue.Add(balanceRighties);
             return returnValue;
-        }
-
-        private int calculateColumn(int ip_for_balance, int totalIP)
-        {
-            float ip = (float)ip_for_balance;
-            float total = (float)totalIP;
-
-            // Always Round up
-            int value = Convert.ToInt32(Math.Ceiling((ip / total) * targetAtBats));
-            return value;
         }
     }
 }

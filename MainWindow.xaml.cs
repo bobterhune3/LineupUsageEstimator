@@ -15,7 +15,7 @@ namespace LIneupUsageEstimator
     /// </summary>
     public partial class MainWindow : Window
     {
-        private CalculatorFactory.CalculatorType USAGE_CALCULATOR = CalculatorFactory.CalculatorType.SP_SCHEDULE;
+        private CalculatorFactory.CalculatorType USAGE_CALCULATOR = CalculatorFactory.CalculatorType.ALL_PITCHERS_AND_SCHEDULE;
         private SOMTeamReportFile teamReportFile;
         public enum POSITIONS { CATCHER = 1, FIRSTBASE, SECONDBASE, THIRDBASE, SHORTSTOP, LEFTFIELD, CENTERFIELD, RIGHTFIELD, DH };
         private Boolean dialogInitialized = false;
