@@ -33,6 +33,7 @@ namespace LIneupUsageEstimator
 
         public void setPlayers(List<Player> players)
         {
+            int ABAdjustment = Int32.Parse(Properties.Settings.Default.ABAddition);
             clearInfoTable(InfoGrid);
             List<Player> sorted = players.OrderBy(o => o.Name).ToList();
             int postion = 1;
@@ -61,14 +62,17 @@ namespace LIneupUsageEstimator
                         }
                     }
                 }
-                int remaining = player.Actual - totalAB;
+                int remaining = (player.Actual + ABAdjustment) - totalAB;
 
                 RowDefinition row = new RowDefinition();
                 row.Height = GridLength.Auto;
                 InfoGrid.RowDefinitions.Add(row);
                 InfoGrid.Children.Add(BuildPlayerInfoRow(player.Name, COLUMNS.NAME, postion, remaining >= 0 ? Colors.Black : Colors.Red));
                 InfoGrid.Children.Add(BuildPlayerInfoRow(Convert.ToString(totalAB), COLUMNS.PROJECTED, postion, Colors.Black));
-                InfoGrid.Children.Add(BuildPlayerInfoRow(player.Actual.ToString(), COLUMNS.ACTUAL, postion, Colors.Black));
+                if(ABAdjustment > 0)
+                    InfoGrid.Children.Add(BuildPlayerInfoRow(String.Format("{0}+{1}",player.Actual, ABAdjustment), COLUMNS.ACTUAL, postion, Colors.Black));
+                 else
+                    InfoGrid.Children.Add(BuildPlayerInfoRow(player.Actual.ToString(), COLUMNS.ACTUAL, postion, Colors.Black));
                 InfoGrid.Children.Add(BuildPlayerInfoRow(Convert.ToString(remaining), COLUMNS.REMAINING, postion, remaining >= 0 ? Colors.Black : Colors.Red));
                 InfoGrid.Children.Add(BuildPlayerInfoRow(player.Bal, COLUMNS.BAL, postion, Colors.Black));
                 InfoGrid.Children.Add(BuildPlayerInfoRow(buildPositionDisplayString(positions), COLUMNS.POSITIONS, postion, Colors.Black));

@@ -10,7 +10,7 @@
         <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="471" Margin="1161,368,0,0" VerticalAlignment="Top" Width="317"/>
         <ComboBox x:Name="CB_LIST_OF_TEAMS" HorizontalAlignment="Left" Margin="106,13,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="CB_LIST_OF_TEAMS_SelectionChanged" SelectedIndex="1"/>
         <Label Content="Primary Team:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="91"/>
-        <Button x:Name="BTN_CLOSE" Content="Button" HorizontalAlignment="Left" Margin="1017,821,0,0" VerticalAlignment="Top" Width="75" Click="BTN_CLOSE_Click"/>
+        <Button x:Name="BTN_CLOSE" Content="EXIT" HorizontalAlignment="Left" Margin="1017,821,0,0" VerticalAlignment="Top" Width="75" Click="BTN_CLOSE_Click"/>
         <Grid x:Name="GRID" Margin="22,64,15.8,552.4">
             <Grid.RowDefinitions>
                 <RowDefinition x:Name="HEADER" Height="25" />
@@ -28,9 +28,10 @@
 
         <Grid x:Name="GRID_INFO" HorizontalAlignment="Left" Height="455" Margin="1168,384,0,0" VerticalAlignment="Top" Width="296"/>
         <Label Content="Team Batting Information" HorizontalAlignment="Left" Margin="1198,342,0,0" VerticalAlignment="Top" Width="280"/>
-        <Button x:Name="BTN_MANAGE_LINEUPS" Content="Manage Lineup" HorizontalAlignment="Left" Margin="241,16,0,0" VerticalAlignment="Top" Width="121" Click="BTN_MANAGE_LINEUPS_Click"/>
-        <Button x:Name="BTN_OPPONENTS" Content="Update Opponents" HorizontalAlignment="Left" Margin="377,16,0,0" VerticalAlignment="Top" Width="121" Click="BTN_OPPONENTS_Click"/>
+        <Button x:Name="BTN_MANAGE_LINEUPS" Content="Manage Lineup..." HorizontalAlignment="Left" Margin="241,16,0,0" VerticalAlignment="Top" Width="121" Click="BTN_MANAGE_LINEUPS_Click"/>
+        <Button x:Name="BTN_OPPONENTS" Content="Update Opponents..." HorizontalAlignment="Left" Margin="377,16,0,0" VerticalAlignment="Top" Width="121" Click="BTN_OPPONENTS_Click"/>
         <Grid x:Name="GRID_USAGE_STATS" HorizontalAlignment="Left" Height="412" Margin="22,368,0,0" VerticalAlignment="Top" Width="264"/>
         <Label Content="Estimated Batter At Bats" HorizontalAlignment="Left" Margin="22,342,0,0" VerticalAlignment="Top" Width="229"/>
+        <Button x:Name="BTN_SETTINGS" Content="Settings..." HorizontalAlignment="Left" Margin="517,16,0,0" VerticalAlignment="Top" Width="74" Click="BTN_SETTINGS_Click"/>
     </Grid>
 </Window>

@@ -372,6 +372,16 @@ namespace LIneupUsageEstimator
         {
             LineupPersistence.saveDatabase(storedLineups);
         }
+
+        private void BTN_SETTINGS_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsDlg dlg = new SettingsDlg();
+            if( dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                CB_LIST_OF_TEAMS_SelectionChanged(this, null);
+            }
+
+        }
     }
 
 

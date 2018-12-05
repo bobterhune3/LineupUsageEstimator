@@ -22,5 +22,17 @@ namespace LIneupUsageEstimator.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public string ABAddition {
+            get {
+                return ((string)(this["ABAddition"]));
+            }
+            set {
+                this["ABAddition"] = value;
+            }
+        }
     }
 }
