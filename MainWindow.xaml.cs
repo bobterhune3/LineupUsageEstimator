@@ -193,29 +193,6 @@ namespace LIneupUsageEstimator
 
         private void syncUpTheData(Dictionary<String, TeamLineup> storedLineups)
         {
-            /*
-            for(int i=0; i<=63;i++)
-            {
-                Object box = (Object)GRID.Children[i];
-                if (box is ComboBox)
-                {
-                    Object value = (Object)((ComboBox)box).SelectedValue;
-                    if (value is DefenseComboBoxItem)
-                    {
-                        System.Console.WriteLine("*" + i + ", " + ((Player)((DefenseComboBoxItem)value).Value).Name);
-                    }
-                    else
-                    {
-                        System.Console.WriteLine("*" + i);
-                    }
-                }
-                else
-                {
-                    System.Console.WriteLine("Label:" + ((Label)box).ToString());
-                }
-
-            }
-            */
             /* - This is commented out because a file is saved and I want to try to load it */
             if (GRID.Children.Count > 0 && currentlySelectedTeam != null)
             {
@@ -234,7 +211,6 @@ namespace LIneupUsageEstimator
             }
             
             return; 
-            
         }
 
         private void fillBoxesWithSavedDataData()
@@ -277,8 +253,6 @@ namespace LIneupUsageEstimator
                     }
                     firstItemIndex += 10;
                 }
-
-                Console.Out.WriteLine("TEST");
             }
         }
 
@@ -354,8 +328,8 @@ namespace LIneupUsageEstimator
         private ComboBox BuildPlayerPostitionBox( int col, POSITIONS postion, LineupDataObj teamLineup, List<Player> players, int index)
         {
             ComboBox playerBox = new ComboBox();
-//            playerBox.Items.Add("NOT SET");
-            playerBox.Items.Add(index.ToString());
+            playerBox.Items.Add("NOT SET");
+//            playerBox.Items.Add(index.ToString());
             
             playerBox.FontSize = 12;
             playerBox.FontWeight = FontWeights.Normal;

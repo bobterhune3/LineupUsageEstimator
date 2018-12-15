@@ -28,10 +28,6 @@ namespace LIneupUsageEstimator
             this.BalanceItemTo = storedData.BalanceItemTo;
             this.BalanceItemFrom = storedData.BalanceItemFrom;
             this.EstimatedAtBats = storedData.EstimatedAtBats;
-     //       if(storedData.playersByPos != null)
-     //           this.playersByPos = storedData.playersByPos;  //For backwards compatibility
-     //       else
-     //           this.playersByPos = new List<Player>();
         }
 
         public String PitcherArm { get; set; }
@@ -58,7 +54,6 @@ namespace LIneupUsageEstimator
                 serializableLineupData.BalanceItemTo = this.BalanceItemTo;
                 serializableLineupData.BalanceItemFrom = this.BalanceItemFrom;
                 serializableLineupData.EstimatedAtBats = this.EstimatedAtBats;
- //               serializableLineupData.playersByPos = this.playersByPos;
             }
 
             return serializableLineupData;
@@ -77,7 +72,6 @@ namespace LIneupUsageEstimator
             BalanceItemFrom = from;
             EstimatedAtBats = atBats;
             lineupGuid = guid;
-    //        playersByPos = new List<Player>();
         }
 
         public String PitcherArm { get; set; }
@@ -93,6 +87,5 @@ namespace LIneupUsageEstimator
             return PitcherArm + " " + BalanceItemFrom + "-" + BalanceItemTo;
         }
 
-//        public List<Player> playersByPos { get; set; }
     }
 }
