@@ -38,7 +38,6 @@ namespace LIneupUsageEstimator
         public MainWindow()
         {
             InitializeComponent();
-
         }
 
         private void Window_Initialized(object sender, EventArgs e)

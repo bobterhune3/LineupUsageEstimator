@@ -41,7 +41,6 @@ namespace LIneupUsageEstimator
             {
                 int totalAB = 0;
                 Dictionary<MainWindow.POSITIONS, int> positions = new Dictionary<MainWindow.POSITIONS, int>();
-  //              StringBuilder position = new StringBuilder();
 
                 foreach (Object obj in LineupGrid.Children)
                 {
@@ -56,7 +55,6 @@ namespace LIneupUsageEstimator
                             {
                                 MainWindow.POSITIONS pos = ((PositionObj)cb.GetValue(MainWindow.dpPos)).Position;
                                 adjustPostionCount(positions, pos);
-                         //       position.Append(shortPositionName(pos));
                                 totalAB += lineup.EstimatedAtBats;
                             }
                         }
