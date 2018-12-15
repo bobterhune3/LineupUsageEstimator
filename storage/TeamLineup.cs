@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using somReporter.team;
 
 namespace LIneupUsageEstimator.storage
 {
@@ -10,7 +11,7 @@ namespace LIneupUsageEstimator.storage
     public class TeamLineup// : INotifyPropertyChanged
     {
         public List<LineupData> Lineups { get; set; }
-
+        public List<Player> playerByGRID { get; set; }
 #pragma warning disable CS0657 // Not a valid attribute location for this declaration
         [field: NonSerialized()]
 #pragma warning restore CS0657 // Not a valid attribute location for this declaration

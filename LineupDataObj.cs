@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using somReporter.team;
 
 namespace LIneupUsageEstimator
 {
@@ -17,6 +18,7 @@ namespace LIneupUsageEstimator
         {
             this.PitcherArm = "X";
             this.guid = Guid.NewGuid();
+            this.playersByPos = new List<Player>();
         }
 
         public LineupDataObj(LineupData storedData)
@@ -26,6 +28,10 @@ namespace LIneupUsageEstimator
             this.BalanceItemTo = storedData.BalanceItemTo;
             this.BalanceItemFrom = storedData.BalanceItemFrom;
             this.EstimatedAtBats = storedData.EstimatedAtBats;
+     //       if(storedData.playersByPos != null)
+     //           this.playersByPos = storedData.playersByPos;  //For backwards compatibility
+     //       else
+     //           this.playersByPos = new List<Player>();
         }
 
         public String PitcherArm { get; set; }
@@ -52,10 +58,13 @@ namespace LIneupUsageEstimator
                 serializableLineupData.BalanceItemTo = this.BalanceItemTo;
                 serializableLineupData.BalanceItemFrom = this.BalanceItemFrom;
                 serializableLineupData.EstimatedAtBats = this.EstimatedAtBats;
+ //               serializableLineupData.playersByPos = this.playersByPos;
             }
 
             return serializableLineupData;
         }
+
+        public List<Player> playersByPos { get; set; }
     }
 
     [Serializable()]
@@ -68,6 +77,7 @@ namespace LIneupUsageEstimator
             BalanceItemFrom = from;
             EstimatedAtBats = atBats;
             lineupGuid = guid;
+    //        playersByPos = new List<Player>();
         }
 
         public String PitcherArm { get; set; }
@@ -80,7 +90,9 @@ namespace LIneupUsageEstimator
         {
             if (PitcherArm.Equals("X"))
                 return "";
-            return PitcherArm + " " + BalanceItemTo + "-" + BalanceItemFrom;
+            return PitcherArm + " " + BalanceItemFrom + "-" + BalanceItemTo;
         }
+
+//        public List<Player> playersByPos { get; set; }
     }
 }

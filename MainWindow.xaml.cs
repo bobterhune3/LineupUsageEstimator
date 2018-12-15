@@ -21,6 +21,8 @@ namespace LIneupUsageEstimator
         private Boolean dialogInitialized = false;
         private TeamBatterInfo batterInfo;
         private BalanceUsageStats balanceUsage;
+        private Team currentlySelectedTeam = null;
+
         // 0=Righties, 1=Lefties, Map is balance ("9L) and Projected At Bats
         private List<Dictionary<int, int>> balanceAtBats = new List<Dictionary<int, int>>();
 
@@ -105,6 +107,7 @@ namespace LIneupUsageEstimator
 
             TeamLineup lineups = storedLineups[team.Abrv];
             int index = 1;
+            int box = 1;
             foreach (LineupData lineupData in lineups.Lineups)
             {
                 LineupDataObj lineup = new LineupDataObj(lineupData);
@@ -112,15 +115,15 @@ namespace LIneupUsageEstimator
                 int pitcherArmIndex = lineup.PitcherArm.Equals("L") ? 0 : 1;
                 lineup.EstimatedAtBats = calculateAtBatsByLineup(balanceAtBats[pitcherArmIndex], lineup.getLineupData());
 
-                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.CATCHER, lineup, players));
-                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.FIRSTBASE, lineup, players));
-                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.SECONDBASE, lineup, players));
-                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.THIRDBASE, lineup, players));
-                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.SHORTSTOP, lineup, players));
-                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.LEFTFIELD, lineup, players));
-                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.CENTERFIELD, lineup, players));
-                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.RIGHTFIELD, lineup, players));
-                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.DH, lineup, players));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.CATCHER, lineup, players, box++));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.FIRSTBASE, lineup, players, box++));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.SECONDBASE, lineup, players, box++));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.THIRDBASE, lineup, players, box++));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.SHORTSTOP, lineup, players, box++));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.LEFTFIELD, lineup, players, box++));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.CENTERFIELD, lineup, players, box++));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.RIGHTFIELD, lineup, players, box++));
+                GRID.Children.Add(BuildPlayerPostitionBox(index, POSITIONS.DH, lineup, players, box++));
 
                 createColumn(lineup, index, 160);
 
@@ -166,29 +169,142 @@ namespace LIneupUsageEstimator
                 
         }
 
+        private List<Player> lookupAssigned(int index)
+        {
+            List<Player> playersInLineup = new List<Player>();
+            for (int posIndex = index; posIndex <= index + 9; posIndex++) { 
+
+                if (GRID.Children[posIndex] is ComboBox)
+                {
+                    ComboBox box = (ComboBox)GRID.Children[posIndex];
+                    Object value = (Object)box.SelectedValue;
+                    if (value is DefenseComboBoxItem)
+                    {
+                        playersInLineup.Add(((DefenseComboBoxItem)value).Value);
+                    }
+                    else
+                    {
+                        playersInLineup.Add(new Player(true));
+                    }
+                }
+            }
+            return playersInLineup;
+        }
+
+        private void syncUpTheData(Dictionary<String, TeamLineup> storedLineups)
+        {
+            /*
+            for(int i=0; i<=63;i++)
+            {
+                Object box = (Object)GRID.Children[i];
+                if (box is ComboBox)
+                {
+                    Object value = (Object)((ComboBox)box).SelectedValue;
+                    if (value is DefenseComboBoxItem)
+                    {
+                        System.Console.WriteLine("*" + i + ", " + ((Player)((DefenseComboBoxItem)value).Value).Name);
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("*" + i);
+                    }
+                }
+                else
+                {
+                    System.Console.WriteLine("Label:" + ((Label)box).ToString());
+                }
+
+            }
+            */
+            /* - This is commented out because a file is saved and I want to try to load it */
+            if (GRID.Children.Count > 0 && currentlySelectedTeam != null)
+            {
+                LineupDataObj lineup = null;
+                int numberOfLineups = GRID.ColumnDefinitions.Count;
+                List<Player> playersByGrid = new List<Player>();
+                int firstItemIndex = numberOfLineups + 2;
+                for (int col = 1; col < numberOfLineups; col++)
+                {
+                    playersByGrid.AddRange(lookupAssigned(firstItemIndex));
+                    firstItemIndex += 10;
+                }
+
+                Team team = currentlySelectedTeam;
+                storedLineups[team.Abrv].playerByGRID = playersByGrid;
+            }
+            
+            return; 
+            
+        }
+
+        private void fillBoxesWithSavedDataData()
+        {
+            if (GRID.Children.Count > 0 && currentlySelectedTeam != null)
+            {
+
+                Team team = currentlySelectedTeam;
+                List<Player> playersByGrid = storedLineups[team.Abrv].playerByGRID;
+                if (playersByGrid == null)
+                    return;
+
+                int numberOfLineups = GRID.ColumnDefinitions.Count;
+                int pos = 0;
+                int firstItemIndex = numberOfLineups + 2;
+                for (int col =1; col < numberOfLineups; col++)
+                {
+                    for (int posIndex = firstItemIndex; posIndex < firstItemIndex + 9; posIndex++)
+                    {
+                        Object box = GRID.Children[posIndex];
+                        if (box is ComboBox)
+                        {
+                            Player player = playersByGrid[pos++];
+                            if (player != null)
+                            {
+                                foreach (Object item in ((ComboBox)box).Items)
+                                {
+                                    if (item is DefenseComboBoxItem)
+                                    {
+                                        if (((DefenseComboBoxItem)item).Value.Name.Equals(player.Name))
+                                        {
+                                            ((ComboBox)box).SelectedItem = item;
+                                            break;
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    firstItemIndex += 10;
+                }
+
+                Console.Out.WriteLine("TEST");
+            }
+        }
+
         private void CB_LIST_OF_TEAMS_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (dialogInitialized) { 
-                Object item = CB_LIST_OF_TEAMS.SelectedItem;
-                if (item is Team)
-                {
-                    Team team = (Team)item;
+            if (dialogInitialized)
+            {
+                currentlySelectedTeam = (Team)CB_LIST_OF_TEAMS.SelectedItem;
 
-                    TeamLineup selectedTeamLineup = LineupPersistence.lookupTeamLineup(storedLineups, team);
-                    System.Console.WriteLine(team.Abrv + " contains " + selectedTeamLineup.Lineups.Count + " lineups.");
+                TeamLineup selectedTeamLineup = LineupPersistence.lookupTeamLineup(storedLineups, currentlySelectedTeam);
+                System.Console.WriteLine(currentlySelectedTeam.Abrv + " contains " + selectedTeamLineup.Lineups.Count + " lineups.");
 
-                    List<Player> players = teamReportFile.getTeamBatters(team);
-                    batterInfo.setPlayers(players);
-                    IUsageCalculator calculator = CalculatorFactory.getCalculator(USAGE_CALCULATOR, teamReportFile, team);
-                    calculator.setOptions(CalculatorOptions.OPTION_IN_DIVISION_GAMES, teamLineupData.InDivisionGameCount);
-                    calculator.setOptions(CalculatorOptions.OPTION_OUT_DIVISION_GAMES, teamLineupData.OutofDivisionGameCount);
-                    //TODO: Add UI element for Target At Bats
-                    calculator.setOptions(CalculatorOptions.OPTION_TARGET_AT_BAT, 615); 
+                List<Player> players = teamReportFile.getTeamBatters(currentlySelectedTeam);
+                batterInfo.setPlayers(players);
+                IUsageCalculator calculator = CalculatorFactory.getCalculator(USAGE_CALCULATOR, teamReportFile, currentlySelectedTeam);
+                calculator.setOptions(CalculatorOptions.OPTION_IN_DIVISION_GAMES, teamLineupData.InDivisionGameCount);
+                calculator.setOptions(CalculatorOptions.OPTION_OUT_DIVISION_GAMES, teamLineupData.OutofDivisionGameCount);
+                //TODO: Add UI element for Target At Bats
+                calculator.setOptions(CalculatorOptions.OPTION_TARGET_AT_BAT, 615); 
                     
-                    balanceAtBats = balanceUsage.buildTable(calculator);
+                balanceAtBats = balanceUsage.buildTable(calculator);
 
-                    updateWorkbook(team, players);
-                }
+                updateWorkbook(currentlySelectedTeam, players);
+
+                fillBoxesWithSavedDataData();
+
                 BTN_MANAGE_LINEUPS.IsEnabled = true;
             }
         }
@@ -235,20 +351,22 @@ namespace LIneupUsageEstimator
             return label;
         }
 
-        private ComboBox BuildPlayerPostitionBox( int col, POSITIONS postion, LineupDataObj lineup, List<Player> players)
+        private ComboBox BuildPlayerPostitionBox( int col, POSITIONS postion, LineupDataObj teamLineup, List<Player> players, int index)
         {
             ComboBox playerBox = new ComboBox();
-            playerBox.Items.Add("NOT SET");
+//            playerBox.Items.Add("NOT SET");
+            playerBox.Items.Add(index.ToString());
+            
             playerBox.FontSize = 12;
             playerBox.FontWeight = FontWeights.Normal;
             playerBox.Foreground = new SolidColorBrush(Colors.Green);
             playerBox.VerticalAlignment = VerticalAlignment.Top;
             playerBox.SelectedIndex = 0;
             playerBox.SelectionChanged += lineup_player_SelectionChanged;
-            playerBox.SetValue(dp, lineup);
+            playerBox.SetValue(dp, teamLineup);
             playerBox.SetValue(dpPos, new PositionObj(postion));
 
-            addPlayersByPosition(playerBox, players, postion, lineup.EstimatedAtBats);
+            addPlayersByPosition(playerBox, players, postion, teamLineup.EstimatedAtBats);
 
             Grid.SetRow(playerBox, (int)postion);
             Grid.SetColumn(playerBox, col);
@@ -346,6 +464,7 @@ namespace LIneupUsageEstimator
 
                         TeamLineup otherTeamLineup = LineupPersistence.lookupTeamLineup(storedLineups, otherTeam);
                         dlg.applyConfigurationToAnotherTeam(otherTeamLineup);
+                        syncUpTheData(storedLineups);
                         LineupPersistence.saveDatabase(storedLineups);
                     }
                     //Update the table!
@@ -370,6 +489,7 @@ namespace LIneupUsageEstimator
 
         private void LineupUsageCalculator_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            syncUpTheData(storedLineups);
             LineupPersistence.saveDatabase(storedLineups);
         }
 
