@@ -22,7 +22,7 @@ namespace somReporter
             if (!File.Exists(m_fileName))
             {
                 MessageBox.Show(null,
-                    "Unable to find the League Roster Report file at " + reportPath + ".\r\nTo create the file, generate a single 'Roster Report' from the `League` menu of the SOM Baseball game.  Be sure to select `Each Team` and save the file to the above location by Selecting `Print to File` from the `File` menu.",
+                    "Unable to find the League Roster Report file at " + reportPath + ".\r\nTo create the file:\r\n1. Select any team in your league\r\n2. From the `Team` menu select `Display Reports`\r\n3. Select the `Roster Report`\r\n4. Select `Each Team`\r\n5. Save the file to the above location by Selecting `Print to File` from the `File` menu.\r\n6. Make sure you name the file rosterreport.PRT",
                     "Unable to find League Roster Report", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new Exception("File " + reportPath + " cannot be found");
             }
@@ -156,6 +156,8 @@ namespace somReporter
                         teams.Add(team);
                         team.Name = thisTeam;
                         team.Abrv = Team.prettyTeamName(thisTeam);
+                        if (team.Abrv.Equals("UNK"))
+                            MessageBox.Show("Abreviation mapping for team " + team.Name + " not found.");
                         currentTeam = team;
                     }
                 }
@@ -208,7 +210,7 @@ namespace somReporter
                         player.Bal = matchB.Groups[3].Value.Trim();
                         player.Actual = Int32.Parse(matchB.Groups[4].Value.Trim());
                         batters.Add(player);
-                        Console.Out.WriteLine("   inBatterSection ");
+     //                   Console.Out.WriteLine("   inBatterSection ");
                     }
                 }
                 else if (inBatterBalanceSection)
@@ -230,7 +232,7 @@ namespace somReporter
                         player.Throws = matchBB.Groups[4].Value.Trim();
 
                         batterIndex++;
-                        Console.Out.WriteLine("   inBatterBalanceSection ");
+  //                      Console.Out.WriteLine("   inBatterBalanceSection ");
                     }
                 }
                 else if (inPitcherSection)
@@ -251,7 +253,7 @@ namespace somReporter
                         if (spRating.Length > 0)
                             player.Games = Int32.Parse(spRating);
                         pitchers.Add(player);
-                        Console.Out.WriteLine("   inPitcherSection ");
+//                        Console.Out.WriteLine("   inPitcherSection ");
                     }
                 }
                 else if (inPitcherBalanceSection)

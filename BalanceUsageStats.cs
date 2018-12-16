@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using somReporter.team;
 using System.Windows.Media;
-using somReporter.util.somUsageAnalysis;
 using somReporter;
 
 namespace LIneupUsageEstimator

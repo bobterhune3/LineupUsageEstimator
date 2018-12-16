@@ -29,7 +29,7 @@ namespace LIneupUsageEstimator
         {
 
             tableLayoutPanel.Controls.Add(buildHeaderLabel("Opponent"), 0, 0);
-            tableLayoutPanel.Controls.Add(buildHeaderLabel("Game Played"), 1, 0);
+            tableLayoutPanel.Controls.Add(buildHeaderLabel("Division"), 1, 0);
 
             this.tableLayoutPanel.RowCount = allTeams.Count-1;
             Boolean initDatabase = false;

@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using somReporter;
-using somReporter.util.somUsageAnalysis;
 using somReporter.team;
 using LIneupUsageEstimator.storage;
 
@@ -47,7 +46,6 @@ namespace LIneupUsageEstimator
 
             // Load Stored data from database file
             storedLineups = LineupPersistence.loadDatabase();
-
             teamReportFile = new SOMTeamReportFile(Config.getConfigurationFile("rosterReport.PRT"));
             teamReportFile.parse();
 
@@ -195,7 +193,6 @@ namespace LIneupUsageEstimator
             /* - This is commented out because a file is saved and I want to try to load it */
             if (GRID.Children.Count > 0 && currentlySelectedTeam != null)
             {
-                LineupDataObj lineup = null;
                 int numberOfLineups = GRID.ColumnDefinitions.Count;
                 List<Player> playersByGrid = new List<Player>();
                 int firstItemIndex = numberOfLineups + 2;

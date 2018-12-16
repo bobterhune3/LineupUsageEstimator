@@ -5,8 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-namespace somReporter.util.somUsageAnalysis
-{
+namespace LIneupUsageEstimator { 
 
     public class Config
     {
@@ -22,7 +21,7 @@ namespace somReporter.util.somUsageAnalysis
         public static float WARNING_LEVEL = 0.8f;
         public static float SUGGESTION_LEVEL_PERCENT = 1.1f;
         */
-        public static String CSV_FILE_LOCATION = "C:\\dev\\somUsageAnalysis\\bin\\Debug";
+        public static String CSV_FILE_LOCATION = System.IO.Directory.GetCurrentDirectory();
         /*
         public static String LEAGUE_NAME = "2016ND";
 
