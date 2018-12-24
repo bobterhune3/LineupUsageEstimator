@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LIneupUsageEstimator
 {
     public class LineupTools
     {
-
         public static List<LineupBalanceItem> buildDefaultLineupTypes()
         {
             List<LineupBalanceItem> balanceItems = new List<LineupBalanceItem>();
@@ -34,6 +29,6 @@ namespace LIneupUsageEstimator
 
             return balanceItems;
         }
-    }
 
+    }
 }

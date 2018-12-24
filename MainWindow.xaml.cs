@@ -6,6 +6,7 @@ using System.Windows.Media;
 using somReporter;
 using somReporter.team;
 using LIneupUsageEstimator.storage;
+using somReportUtils;
 
 namespace LIneupUsageEstimator
 {
@@ -41,12 +42,14 @@ namespace LIneupUsageEstimator
 
         private void Window_Initialized(object sender, EventArgs e)
         {
+            TeamUtils.registerTeamAbvMapping( new Config().getTeamAbrvMapping());
+
             dp = DependencyProperty.Register("LineupInfo", typeof(object), typeof(LineupDataObj), new UIPropertyMetadata());
             dpPos = DependencyProperty.Register("Positions", typeof(object), typeof(PositionObj), new UIPropertyMetadata());
 
             // Load Stored data from database file
             storedLineups = LineupPersistence.loadDatabase();
-            teamReportFile = new SOMTeamReportFile(Config.getConfigurationFile("rosterReport.PRT"));
+            teamReportFile = new SOMTeamReportFile(Config.getConfigurationFilePath("rosterReport.PRT"));
             teamReportFile.parse();
 
             completeListOfTeams = teamReportFile.getTeams();
@@ -256,26 +259,29 @@ namespace LIneupUsageEstimator
         {
             if (dialogInitialized)
             {
-                currentlySelectedTeam = (Team)CB_LIST_OF_TEAMS.SelectedItem;
+                if (CB_LIST_OF_TEAMS.SelectedItem is Team)
+                {
+                    currentlySelectedTeam = (Team)CB_LIST_OF_TEAMS.SelectedItem;
 
-                TeamLineup selectedTeamLineup = LineupPersistence.lookupTeamLineup(storedLineups, currentlySelectedTeam);
-                System.Console.WriteLine(currentlySelectedTeam.Abrv + " contains " + selectedTeamLineup.Lineups.Count + " lineups.");
+                    TeamLineup selectedTeamLineup = LineupPersistence.lookupTeamLineup(storedLineups, currentlySelectedTeam);
+                    System.Console.WriteLine(currentlySelectedTeam.Abrv + " contains " + selectedTeamLineup.Lineups.Count + " lineups.");
 
-                List<Player> players = teamReportFile.getTeamBatters(currentlySelectedTeam);
-                batterInfo.setPlayers(players);
-                IUsageCalculator calculator = CalculatorFactory.getCalculator(USAGE_CALCULATOR, teamReportFile, currentlySelectedTeam);
-                calculator.setOptions(CalculatorOptions.OPTION_IN_DIVISION_GAMES, teamLineupData.InDivisionGameCount);
-                calculator.setOptions(CalculatorOptions.OPTION_OUT_DIVISION_GAMES, teamLineupData.OutofDivisionGameCount);
-                //TODO: Add UI element for Target At Bats
-                calculator.setOptions(CalculatorOptions.OPTION_TARGET_AT_BAT, 615); 
-                    
-                balanceAtBats = balanceUsage.buildTable(calculator);
+                    List<Player> players = teamReportFile.getTeamBatters(currentlySelectedTeam);
+                    batterInfo.setPlayers(players);
+                    IUsageCalculator calculator = CalculatorFactory.getCalculator(USAGE_CALCULATOR, teamReportFile, currentlySelectedTeam);
+                    calculator.setOptions(CalculatorOptions.OPTION_IN_DIVISION_GAMES, teamLineupData.InDivisionGameCount);
+                    calculator.setOptions(CalculatorOptions.OPTION_OUT_DIVISION_GAMES, teamLineupData.OutofDivisionGameCount);
+                    //TODO: Add UI element for Target At Bats
+                    calculator.setOptions(CalculatorOptions.OPTION_TARGET_AT_BAT, 615);
 
-                updateWorkbook(currentlySelectedTeam, players);
+                    balanceAtBats = balanceUsage.buildTable(calculator);
 
-                fillBoxesWithSavedDataData();
+                    updateWorkbook(currentlySelectedTeam, players);
 
-                BTN_MANAGE_LINEUPS.IsEnabled = true;
+                    fillBoxesWithSavedDataData();
+
+                    BTN_MANAGE_LINEUPS.IsEnabled = true;
+                }
             }
         }
 

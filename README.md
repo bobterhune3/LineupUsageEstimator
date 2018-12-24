@@ -98,7 +98,7 @@ The screen you will be looking at is pretty complicated.  Here is a simple tour;
 3. The other columns each represent a lineup that was just created.
 4. Each position should have the text "NOT SET" across the grid. 
 5. Select a lineup and a position and select a box with the mouse
-6. The drop down will list all players who can play that position.
+6. The drop down will list all players who can play that position. SOM Outfielder playing out of position rules apply as long as adjusted range rating is 4 or less.
 7. The drop down will contain the player Name, Defense Rating with arm, Balance and At Bats on the player card
 8. As positions are filled the *Team Batting Information* section will be populated.
 

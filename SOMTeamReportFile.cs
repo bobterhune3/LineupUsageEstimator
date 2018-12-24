@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using somReporter.team;
 using LIneupUsageEstimator;
+using somReportUtils;
 
 namespace somReporter
 {
@@ -109,7 +110,10 @@ namespace somReporter
             return batterDataByTeam[team];
         }
 
-        public List<Team> getTeams() { return teams; }
+        public List<Team> getTeams() {
+            teams.Sort((a, b) => string.Compare(a.Name, b.Name));
+            return teams;
+        }
 
         private void organizeDataTeam(List<string> lines)
         {
@@ -155,7 +159,7 @@ namespace somReporter
                         team = new Team("", 0);
                         teams.Add(team);
                         team.Name = thisTeam;
-                        team.Abrv = Team.prettyTeamName(thisTeam);
+                        team.Abrv = TeamUtils.prettyTeamName(thisTeam);
                         if (team.Abrv.Equals("UNK"))
                             MessageBox.Show("Abreviation mapping for team " + team.Name + " not found.");
                         currentTeam = team;
