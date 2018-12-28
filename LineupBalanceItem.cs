@@ -9,7 +9,7 @@ namespace LIneupUsageEstimator
     [Serializable()]
     public class LineupBalanceItem
     {
-
+        public long Id { get; set; }
         public int Value { get; set; }
         public int BalanceLevel { get; set; }
         public String BalanceArm { get; set; }

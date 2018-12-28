@@ -49,7 +49,7 @@ namespace LIneupUsageEstimator
 
             // Load Stored data from database file
             storedLineups = LineupPersistence.loadDatabase();
-            teamReportFile = new SOMTeamReportFile(Config.getConfigurationFilePath("rosterReport.PRT"));
+            teamReportFile = new SOMTeamReportFile(Config.getConfigurationFilePath("rosterReport.PRT"), storedLineups);
             teamReportFile.parse();
 
             completeListOfTeams = teamReportFile.getTeams();
@@ -180,7 +180,10 @@ namespace LIneupUsageEstimator
                     Object value = (Object)box.SelectedValue;
                     if (value is DefenseComboBoxItem)
                     {
-                        playersInLineup.Add(((DefenseComboBoxItem)value).Value);
+                        Player player = ((DefenseComboBoxItem)value).Value;
+                        if (player.Id == 0)
+                            player.Id = RecordIndex.getNextId(RecordIndex.INDEX.PlayerId);
+                        playersInLineup.Add(player);
                     }
                     else
                     {
@@ -193,12 +196,37 @@ namespace LIneupUsageEstimator
 
         private void syncUpTheData(Dictionary<String, TeamLineup> storedLineups)
         {
+            
+            for(int i=0; i<GRID.Children.Count;i++)	
+            {	
+                Object box = (Object)GRID.Children[i];	
+                if (box is ComboBox)	
+                {	
+                    Object value = (Object)((ComboBox)box).SelectedValue;	
+                    if (value is DefenseComboBoxItem)	
+                    {	
+                        System.Console.WriteLine("*" + i + ", " + ((Player)((DefenseComboBoxItem)value).Value).Name +
+                            "(" + ((Player)((DefenseComboBoxItem)value).Value).Id + ")"
+                            );	
+                    }	
+                    else	
+                    {	
+                        System.Console.WriteLine("*" + i);	
+                    }	
+                }	
+                else	
+                {	
+                    System.Console.WriteLine("LINEUP :" + ((Label)box).ToString());	
+                }	
+
+            }	
+
             /* - This is commented out because a file is saved and I want to try to load it */
             if (GRID.Children.Count > 0 && currentlySelectedTeam != null)
             {
                 int numberOfLineups = GRID.ColumnDefinitions.Count;
                 List<Player> playersByGrid = new List<Player>();
-                int firstItemIndex = numberOfLineups + 2;
+                int firstItemIndex = 10;
                 for (int col = 1; col < numberOfLineups; col++)
                 {
                     playersByGrid.AddRange(lookupAssigned(firstItemIndex));
@@ -224,11 +252,13 @@ namespace LIneupUsageEstimator
 
                 int numberOfLineups = GRID.ColumnDefinitions.Count;
                 int pos = 0;
-                int firstItemIndex = numberOfLineups + 2;
+                int firstItemIndex = 10;// numberOfLineups + 2;
                 for (int col =1; col < numberOfLineups; col++)
                 {
-                    for (int posIndex = firstItemIndex; posIndex < firstItemIndex + 9; posIndex++)
+                    for (int posIndex = firstItemIndex; posIndex < firstItemIndex + 10; posIndex++)
                     {
+                        if (pos >= playersByGrid.Count)
+                            break;
                         Object box = GRID.Children[posIndex];
                         if (box is ComboBox)
                         {
@@ -242,6 +272,8 @@ namespace LIneupUsageEstimator
                                         if (((DefenseComboBoxItem)item).Value.Name.Equals(player.Name))
                                         {
                                             ((ComboBox)box).SelectedItem = item;
+                                            System.Console.WriteLine("Assinging Player to "+ team.Abrv+": " + col + ":" +pos+", "+ player.Name +
+                                                                                      "(" + player.Id + ")");
                                             break;
                                         }
 

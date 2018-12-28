@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using somReporter;
 
 namespace LIneupUsageEstimator
 {
@@ -40,7 +35,7 @@ namespace LIneupUsageEstimator
                 InitializeComponent();
             }
 
-            WorkingLineup = new LineupDataObj();
+            WorkingLineup = new LineupDataObj(RecordIndex.getNextId(RecordIndex.INDEX.LineupDataId));
             balanceItems = LineupTools.buildDefaultLineupTypes();
 
             if (!testMode)
@@ -156,7 +151,7 @@ namespace LIneupUsageEstimator
                 MessageBox.Show("FROM Selection must be less than or equal to the TO Selection");
                 return;
             }
-            WorkingLineup = new LineupDataObj();
+            WorkingLineup = new LineupDataObj(RecordIndex.getNextId(RecordIndex.INDEX.LineupDataId));
             WorkingLineup.BalanceItemFrom = (LineupBalanceItem)CB_FROM.SelectedItem;
             WorkingLineup.BalanceItemTo = (LineupBalanceItem)CB_TO.SelectedItem;
             WorkingLineup.PitcherArm = radioButtonLH.Checked ? "L" : "R";

@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using somReporter.team;
 using LIneupUsageEstimator;
 using somReportUtils;
+using LIneupUsageEstimator.storage;
 
 namespace somReporter
 {
@@ -16,8 +17,20 @@ namespace somReporter
         private Dictionary<Team, List<Player>> pitcherDataByTeam = null;
         private Dictionary<Team, List<Player>> batterDataByTeam = null;
         private List<Team> teams = new List<Team>();
+        private Dictionary<String, TeamLineup> database = null;
 
         public SOMTeamReportFile(String reportPath)
+        {
+            initialize(reportPath);
+        }
+
+        public SOMTeamReportFile(String reportPath, Dictionary<String, TeamLineup> database)
+        {
+            this.database = database;
+            initialize(reportPath);
+        }
+
+        private void initialize(String reportPath)
         {
             m_fileName = reportPath;
             if (!File.Exists(m_fileName))
@@ -27,7 +40,6 @@ namespace somReporter
                     "Unable to find League Roster Report", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 throw new Exception("File " + reportPath + " cannot be found");
             }
-
         }
 
         //initialWithTestData
@@ -120,8 +132,8 @@ namespace somReporter
             Regex regex = new Regex(@"^([0-9]+) (.{1,18})");
             Regex regexPitcherLine = new Regex(@"^(.{1,22}) [0-9]+ +[0-9]+ +[0-9]+ +([A-Z]+) +([RL]) {1,6}([0-9 ])");
             Regex regexPitcherBalLine = new Regex(@"^(.{1,17})[0-9]+ +([0-9ERL]+) +[0-9]+ +[0-9]+ +[0-9.]+ +([0-9]+) +([0-9]+) +([0-9]+) +[0-9]+ +[0-9]+ +([0-9]+) +([0-9]+)");
-            Regex regexBaterLine = new Regex(@"^(.{1,17}) +[0-9]+ +[0-9] +[0-9]+ +([A-Z]+) +([0-9ERL]+) +([0-9]+)");
-            Regex regexBaterBalanceLine = new Regex(@"^(.{1,16}) +[0-9]+ +([NW])\/([NW]) +([LRS])");
+            Regex regexBatterLine = new Regex(@"^(.{1,17}) +[0-9]+ +[0-9] +[0-9]+ +([A-Z]+) +([0-9ERL]+) +([0-9]+)");
+            Regex regexBatterBalanceLine = new Regex(@"^(.{1,16}) +[0-9]+ +([NW])\/([NW]) +([LRS])");
 
             Team currentTeam;
             bool inPitcherBalanceSection = false;
@@ -156,7 +168,7 @@ namespace somReporter
                         batters = new List<Player>();
                         pitcherIndex = 0;
                         batterIndex = 0;
-                        team = new Team("", 0);
+                        team = new Team(RecordIndex.getNextId(RecordIndex.INDEX.TeamId), "", 0);
                         teams.Add(team);
                         team.Name = thisTeam;
                         team.Abrv = TeamUtils.prettyTeamName(thisTeam);
@@ -201,7 +213,7 @@ namespace somReporter
 
                 if (inBatterSection)
                 {
-                    Match matchB = regexBaterLine.Match(line);
+                    Match matchB = regexBatterLine.Match(line);
                     if (matchB.Success)
                     {
                         if (matchB.Groups.Count != 5)
@@ -213,27 +225,40 @@ namespace somReporter
                         player.IsHitter = true;
                         player.Bal = matchB.Groups[3].Value.Trim();
                         player.Actual = Int32.Parse(matchB.Groups[4].Value.Trim());
+                        player.Id = lookupPlayerId(player, team);
+//                        player.Id = RecordIndex.getNextId(RecordIndex.INDEX.PlayerId);
+
                         batters.Add(player);
      //                   Console.Out.WriteLine("   inBatterSection ");
                     }
                 }
                 else if (inBatterBalanceSection)
                 {
-                    Match matchBB = regexBaterBalanceLine.Match(line);
+                    Match matchBB = regexBatterBalanceLine.Match(line);
                     if (matchBB.Success)
                     {
                         if (matchBB.Groups.Count != 5)
                             throw new Exception("Expecting Yeam, Team and Text");
                         Player player = batters[batterIndex];
                         String name = matchBB.Groups[1].Value.Trim();
+
+                        // Some reports cut the name off at 16 charaters, then cuts off the last name.
+                        if(player.Name.Length > 16)
+                        {
+                            int firstSpaceIndex = player.Name.IndexOf(' ')+1;
+                            int lastNameLength = player.Name.Length - firstSpaceIndex;
+                            name = name.Substring(0, lastNameLength);
+                        }
                         if (!player.Name.EndsWith(name))
                         {
-                            Console.Out.WriteLine("ERROR: Pitcher Name not as expected " + player.Name + " != " + name);
+                            Console.Out.WriteLine("ERROR: Batter Name not as expected " + player.Name + " != " + name);
                             continue;
                         }
                         player.PowerL = matchBB.Groups[2].Value.Trim();
                         player.PowerR = matchBB.Groups[3].Value.Trim();
                         player.Throws = matchBB.Groups[4].Value.Trim();
+                        player.Id = lookupPlayerId(player, team);
+
 
                         batterIndex++;
   //                      Console.Out.WriteLine("   inBatterBalanceSection ");
@@ -256,6 +281,9 @@ namespace somReporter
                         String spRating = matchP.Groups[4].Value.Trim();
                         if (spRating.Length > 0)
                             player.Games = Int32.Parse(spRating);
+                        player.Id = lookupPlayerId(player, team);
+                        
+
                         pitchers.Add(player);
 //                        Console.Out.WriteLine("   inPitcherSection ");
                     }
@@ -314,7 +342,7 @@ namespace somReporter
                                 continue;
                             }
                         }
-                        Defense def = new Defense(catcher, first, second, third, sstop, left, center, right, ofArm);
+                        Defense def = new Defense(RecordIndex.getNextId(RecordIndex.INDEX.DefenseId), catcher, first, second, third, sstop, left, center, right, ofArm);
                         player.Def = def;
 
                         batterIndex++;
@@ -421,11 +449,28 @@ namespace somReporter
         }
 
         //TODO:
-   //     private int adjustIPByPitcherType(Player pitcher, PITCHER_TYPE pitcherType)
-    //    {
-    //        int adjustedIP = pitcher.IP;
-    //        return adjustedIP;
-    //    }
+        //     private int adjustIPByPitcherType(Player pitcher, PITCHER_TYPE pitcherType)
+        //    {
+        //        int adjustedIP = pitcher.IP;
+        //        return adjustedIP;
+        //    }
+
+        private long lookupPlayerId(Player player, Team team)
+        {
+            int playerId = 0;
+
+            if (database.ContainsKey(team.Abrv))
+            {
+                TeamLineup lineup = database[team.Abrv];
+                foreach (Player lineupPlayer in lineup.playerByGRID)
+                {
+                    if (lineupPlayer.CompareTo(player) == 0)
+                        return lineupPlayer.Id;
+                }
+            }
+            return playerId;
+        }
+
 
         public static int calculateAtBatsByLineup(Dictionary<int, int> stats, LineupData lineup)
         {
