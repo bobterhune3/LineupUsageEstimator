@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using somReporter.team;
 using System.Windows.Media;
+using static LineupEngine.LineupEngine;
 
 namespace LIneupUsageEstimator
 {
@@ -40,7 +41,7 @@ namespace LIneupUsageEstimator
             foreach (Player player in sorted)
             {
                 int totalAB = 0;
-                Dictionary<MainWindow.POSITIONS, int> positions = new Dictionary<MainWindow.POSITIONS, int>();
+                Dictionary<POSITIONS, int> positions = new Dictionary<POSITIONS, int>();
 
                 foreach (Object obj in LineupGrid.Children)
                 {
@@ -53,7 +54,7 @@ namespace LIneupUsageEstimator
                             Player selectedPlayer = ((DefenseComboBoxItem)cb.SelectedItem).Value;
                             if (selectedPlayer == player)
                             {
-                                MainWindow.POSITIONS pos = ((PositionObj)cb.GetValue(MainWindow.dpPos)).Position;
+                                POSITIONS pos = ((PositionObj)cb.GetValue(MainWindow.dpPos)).Position;
                                 adjustPostionCount(positions, pos);
                                 totalAB += lineup.EstimatedAtBats;
                             }
@@ -78,7 +79,7 @@ namespace LIneupUsageEstimator
             }
         }
 
-        private void adjustPostionCount(Dictionary<MainWindow.POSITIONS, int> positions, MainWindow.POSITIONS pos)
+        private void adjustPostionCount(Dictionary<POSITIONS, int> positions, POSITIONS pos)
         {
             if(positions.ContainsKey(pos))
             {
@@ -90,10 +91,10 @@ namespace LIneupUsageEstimator
             }
         }
 
-        private String buildPositionDisplayString(Dictionary<MainWindow.POSITIONS, int> positions)
+        private String buildPositionDisplayString(Dictionary<POSITIONS, int> positions)
         {
             StringBuilder sb = new StringBuilder();
-            foreach(MainWindow.POSITIONS pos in positions.Keys)
+            foreach(POSITIONS pos in positions.Keys)
             {
                 if(positions.ContainsKey(pos))
                 {
@@ -121,25 +122,25 @@ namespace LIneupUsageEstimator
             return label;
         }
 
-        private String shortPositionName(MainWindow.POSITIONS position)
+        private String shortPositionName(POSITIONS position)
         {
             switch (position)
             {
-                case MainWindow.POSITIONS.CATCHER:
+                case POSITIONS.CATCHER:
                     return " C";
-                case MainWindow.POSITIONS.FIRSTBASE:
+                case POSITIONS.FIRSTBASE:
                     return " 1B";
-                case MainWindow.POSITIONS.SECONDBASE:
+                case POSITIONS.SECONDBASE:
                     return " 2B";
-                case MainWindow.POSITIONS.THIRDBASE:
+                case POSITIONS.THIRDBASE:
                     return " 3B";
-                case MainWindow.POSITIONS.SHORTSTOP:
+                case POSITIONS.SHORTSTOP:
                     return " SS";
-                case MainWindow.POSITIONS.LEFTFIELD:
+                case POSITIONS.LEFTFIELD:
                     return " LF";
-                case MainWindow.POSITIONS.CENTERFIELD:
+                case POSITIONS.CENTERFIELD:
                     return " CF";
-                case MainWindow.POSITIONS.RIGHTFIELD:
+                case POSITIONS.RIGHTFIELD:
                     return " RF";
                 default:
                     return " DH";

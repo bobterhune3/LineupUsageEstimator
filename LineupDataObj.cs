@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using somReporter.team;
+using LineupEngine;
 using somReporter;
+using somReporter.team;
 
 namespace LIneupUsageEstimator
 {
-
     public class LineupDataObj : DependencyObject
     {
         private LineupData serializableLineupData = null;
-    //    private Guid guid;
+        //    private Guid guid;
 
         public long Id { get; set; }
 
@@ -18,7 +18,7 @@ namespace LIneupUsageEstimator
         {
             this.Id = Id;
             this.PitcherArm = "X";
-     //       this.guid = Guid.NewGuid();
+            //       this.guid = Guid.NewGuid();
             this.playersByPos = new List<Player>();
         }
 
@@ -32,7 +32,7 @@ namespace LIneupUsageEstimator
         }
 
         public String PitcherArm { get; set; }
-        
+
         public LineupBalanceItem BalanceItemTo { get; set; }
         public LineupBalanceItem BalanceItemFrom { get; set; }
         public int EstimatedAtBats { get; set; }
@@ -43,7 +43,7 @@ namespace LIneupUsageEstimator
                 return "";
             return PitcherArm + " " + BalanceItemFrom + "-" + BalanceItemTo;
         }
-        
+
         public LineupData getLineupData()
         {
             if (serializableLineupData == null)
@@ -66,41 +66,4 @@ namespace LIneupUsageEstimator
         public List<Player> playersByPos { get; set; }
     }
 
-    [Serializable()]
-    public class LineupData
-    {
-        public LineupData(long Id, String arm, LineupBalanceItem to, LineupBalanceItem from, int atBats)
-        {
-            PitcherArm = arm;
-            BalanceItemTo = to;
-            BalanceItemFrom = from;
-            EstimatedAtBats = atBats;
-        }
-
-        public LineupData(long Id, String arm, LineupBalanceItem to, LineupBalanceItem from, int atBats, long id)
-        {
-            PitcherArm = arm;
-            BalanceItemTo = to;
-            BalanceItemFrom = from;
-            EstimatedAtBats = atBats;
-            Id = id;
-        }
-
-
-        public long Id { get; set; }
-
-        public String PitcherArm { get; set; }
-        public LineupBalanceItem BalanceItemTo { get; set; }
-        public LineupBalanceItem BalanceItemFrom { get; set; }
-        public int EstimatedAtBats { get; set; }
-//        public Guid lineupGuid { get; set; }
-
-        public override String ToString()
-        {
-            if (PitcherArm.Equals("X"))
-                return "";
-            return PitcherArm + " " + BalanceItemFrom + "-" + BalanceItemTo;
-        }
-
-    }
 }

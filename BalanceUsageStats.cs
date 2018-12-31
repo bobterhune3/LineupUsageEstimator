@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using somReporter.team;
 using System.Windows.Media;
 using somReporter;
+using LineupEngine;
 
 namespace LIneupUsageEstimator
 {

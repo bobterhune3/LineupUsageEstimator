@@ -63,50 +63,39 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="BalanceUsageStats.cs" />
-    <Compile Include="calculators\CalculateColumnUtil.cs" />
-    <Compile Include="calculators\CalculatorFactory.cs" />
-    <Compile Include="calculators\CalculatorOptions.cs" />
-    <Compile Include="calculators\IUsageCalculator.cs" />
-    <Compile Include="calculators\AllPitchers_ScheduleWeighted_Calculator.cs" />
-    <Compile Include="calculators\SPOnly_ScheduleWeighted_Calculator.cs" />
-    <Compile Include="calculators\SPOnly_Straight_Calculator.cs" />
-    <Compile Include="calculators\TeamPitchingProfile.cs" />
     <Compile Include="LineupDataObj.cs" />
-    <Compile Include="LineupListDlg.cs">
+    <Compile Include="ui\LineupListDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LineupListDlg.Designer.cs">
+    <Compile Include="ui\LineupListDlg.Designer.cs">
       <DependentUpon>LineupListDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="LineupMgrDlg.cs">
+    <Compile Include="ui\LineupMgrDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LineupMgrDlg.Designer.cs">
+    <Compile Include="ui\LineupMgrDlg.Designer.cs">
       <DependentUpon>LineupMgrDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="LineupBalanceItem.cs" />
-    <Compile Include="OpponentsDlg.cs">
+    <Compile Include="ui\OpponentsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="OpponentsDlg.Designer.cs">
+    <Compile Include="ui\OpponentsDlg.Designer.cs">
       <DependentUpon>OpponentsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="reports\TeamRosterReport.cs" />
     <Compile Include="SettingsDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="SettingsDlg.Designer.cs">
       <DependentUpon>SettingsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="SOMTeamReportFile.cs" />
     <Compile Include="StaticColumnControlBase.cs" />
-    <Compile Include="storage\LineupPersistence.cs" />
-    <Compile Include="storage\TeamInfo.cs" />
-    <Compile Include="storage\TeamInformation.cs" />
-    <Compile Include="storage\TeamLineup.cs" />
     <Compile Include="TeamBatterInfo.cs" />
-    <Compile Include="util\Config.cs" />
-    <Compile Include="util\LineupTools.cs" />
+    <Compile Include="ui\PositionDepthDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ui\PositionDepthDlg.Designer.cs">
+      <DependentUpon>PositionDepthDlg.cs</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -134,13 +123,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="LineupListDlg.resx">
+    <EmbeddedResource Include="ui\LineupListDlg.resx">
       <DependentUpon>LineupListDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LineupMgrDlg.resx">
+    <EmbeddedResource Include="ui\LineupMgrDlg.resx">
       <DependentUpon>LineupMgrDlg.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="OpponentsDlg.resx">
+    <EmbeddedResource Include="ui\OpponentsDlg.resx">
       <DependentUpon>OpponentsDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -149,6 +138,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsDlg.resx">
       <DependentUpon>SettingsDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ui\PositionDepthDlg.resx">
+      <DependentUpon>PositionDepthDlg.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -160,6 +152,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LineupEngine\LineupEngine.csproj">
+      <Project>{36e844a9-6e91-4f00-bdd2-d4787eb682d0}</Project>
+      <Name>LineupEngine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\somReportUtils\somReportUtils\somReportUtils.csproj">
       <Project>{910bb531-1f6d-437e-9d4b-31c78e1ad771}</Project>
       <Name>somReportUtils</Name>
