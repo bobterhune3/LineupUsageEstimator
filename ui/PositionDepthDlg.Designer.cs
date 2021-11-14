@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.LIST_1B = new System.Windows.Forms.ListView();
-            this.label1 = new System.Windows.Forms.Label();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.LIST_2B = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -72,6 +72,10 @@
             this.LIST_1B.UseCompatibleStateImageBehavior = false;
             this.LIST_1B.View = System.Windows.Forms.View.List;
             // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Width = 300;
+            // 
             // label1
             // 
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -82,10 +86,6 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "First Base";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Width = 300;
             // 
             // label2
             // 
@@ -240,10 +240,10 @@
             this.LIST_LF.GridLines = true;
             this.LIST_LF.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.LIST_LF.LabelWrap = false;
-            this.LIST_LF.Location = new System.Drawing.Point(103, 95);
+            this.LIST_LF.Location = new System.Drawing.Point(55, 95);
             this.LIST_LF.MultiSelect = false;
             this.LIST_LF.Name = "LIST_LF";
-            this.LIST_LF.Size = new System.Drawing.Size(268, 318);
+            this.LIST_LF.Size = new System.Drawing.Size(316, 318);
             this.LIST_LF.TabIndex = 10;
             this.LIST_LF.UseCompatibleStateImageBehavior = false;
             this.LIST_LF.View = System.Windows.Forms.View.List;
@@ -273,10 +273,10 @@
             this.LIST_CF.GridLines = true;
             this.LIST_CF.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.LIST_CF.LabelWrap = false;
-            this.LIST_CF.Location = new System.Drawing.Point(472, 65);
+            this.LIST_CF.Location = new System.Drawing.Point(444, 65);
             this.LIST_CF.MultiSelect = false;
             this.LIST_CF.Name = "LIST_CF";
-            this.LIST_CF.Size = new System.Drawing.Size(268, 318);
+            this.LIST_CF.Size = new System.Drawing.Size(336, 318);
             this.LIST_CF.TabIndex = 12;
             this.LIST_CF.UseCompatibleStateImageBehavior = false;
             this.LIST_CF.View = System.Windows.Forms.View.List;
@@ -309,7 +309,7 @@
             this.LIST_RF.Location = new System.Drawing.Point(850, 95);
             this.LIST_RF.MultiSelect = false;
             this.LIST_RF.Name = "LIST_RF";
-            this.LIST_RF.Size = new System.Drawing.Size(268, 318);
+            this.LIST_RF.Size = new System.Drawing.Size(338, 318);
             this.LIST_RF.TabIndex = 14;
             this.LIST_RF.UseCompatibleStateImageBehavior = false;
             this.LIST_RF.View = System.Windows.Forms.View.List;

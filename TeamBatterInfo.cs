@@ -34,12 +34,21 @@ namespace LIneupUsageEstimator
 
         public void setPlayers(List<Player> players)
         {
-            int ABAdjustment = Int32.Parse(Properties.Settings.Default.ABAddition);
             clearInfoTable(InfoGrid);
             List<Player> sorted = players.OrderBy(o => o.Name).ToList();
             int postion = 1;
             foreach (Player player in sorted)
             {
+                float ABAdjustment = 0;
+
+                if ( player.Actual > 600)
+                    ABAdjustment = (player.Actual * .1f) + Int32.Parse(Properties.Settings.Default.ABAddition);
+                else if (player.Actual > 120)
+                    ABAdjustment = (60f) + Int32.Parse(Properties.Settings.Default.ABAddition);
+                else
+                    ABAdjustment = (player.Actual * .5f) + Int32.Parse(Properties.Settings.Default.ABAddition);
+
+
                 int totalAB = 0;
                 Dictionary<POSITIONS, int> positions = new Dictionary<POSITIONS, int>();
 
@@ -54,14 +63,20 @@ namespace LIneupUsageEstimator
                             Player selectedPlayer = ((DefenseComboBoxItem)cb.SelectedItem).Value;
                             if (selectedPlayer == player)
                             {
-                                POSITIONS pos = ((PositionObj)cb.GetValue(MainWindow.dpPos)).Position;
-                                adjustPostionCount(positions, pos);
-                                totalAB += lineup.EstimatedAtBats;
+                                if (lineup.playersByPos != null && lineup.playersByPos.Contains(selectedPlayer)) {
+                                    DefenseComboBoxItem item = (DefenseComboBoxItem)cb.SelectedItem;
+                                    item.Duplicate = true;
+                                }
+                                else {
+                                    POSITIONS pos = ((PositionObj)cb.GetValue(MainWindow.dpPos)).Position;
+                                    adjustPostionCount(positions, pos);
+                                    totalAB += lineup.EstimatedAtBats;
+                                }
                             }
                         }
                     }
                 }
-                int remaining = (player.Actual + ABAdjustment) - totalAB;
+                int remaining = (player.Actual + (int)ABAdjustment) - totalAB;
 
                 RowDefinition row = new RowDefinition();
                 row.Height = GridLength.Auto;
@@ -69,7 +84,7 @@ namespace LIneupUsageEstimator
                 InfoGrid.Children.Add(BuildPlayerInfoRow(player.Name, COLUMNS.NAME, postion, remaining >= 0 ? Colors.Black : Colors.Red));
                 InfoGrid.Children.Add(BuildPlayerInfoRow(Convert.ToString(totalAB), COLUMNS.PROJECTED, postion, Colors.Black));
                 if(ABAdjustment > 0)
-                    InfoGrid.Children.Add(BuildPlayerInfoRow(String.Format("{0}+{1}",player.Actual, ABAdjustment), COLUMNS.ACTUAL, postion, Colors.Black));
+                    InfoGrid.Children.Add(BuildPlayerInfoRow(String.Format("{0}+{1}",player.Actual, (int)ABAdjustment), COLUMNS.ACTUAL, postion, Colors.Black));
                  else
                     InfoGrid.Children.Add(BuildPlayerInfoRow(player.Actual.ToString(), COLUMNS.ACTUAL, postion, Colors.Black));
                 InfoGrid.Children.Add(BuildPlayerInfoRow(Convert.ToString(remaining), COLUMNS.REMAINING, postion, remaining >= 0 ? Colors.Black : Colors.Red));

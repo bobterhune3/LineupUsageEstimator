@@ -26,7 +26,8 @@ namespace LIneupUsageEstimator
         LineupEngine.LineupEngine engine = new LineupEngine.LineupEngine();
         private Boolean dialogInitialized = false;
         private Team currentlySelectedTeam = null;
-
+        private Boolean inResetMode = false;
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -298,7 +299,10 @@ namespace LIneupUsageEstimator
 
                     updateWorkbook(currentlySelectedTeam, players);
 
-                    fillBoxesWithSavedDataData();
+                    if (this.inResetMode == true)
+                        this.inResetMode = false;
+                    else
+                        fillBoxesWithSavedDataData();
 
                     BTN_MANAGE_LINEUPS.IsEnabled = true;
                 }
@@ -503,8 +507,17 @@ namespace LIneupUsageEstimator
         {
             List<Player> players = engine.TeamReportFile.getTeamBatters(currentlySelectedTeam.Abrv);
             PositionDepthDlg dlg = new PositionDepthDlg(players);
-            dlg.ShowDialog();
+            dlg.Show();
 
+        }
+
+        private void BTN_RESET_LINEUP_Click(object sender, RoutedEventArgs e)
+        {
+            if(MessageBox.Show("Are you sure you want to set all lineup positions to NOT SET?  Restart application to clear all stats", "Reset teams linup?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                inResetMode = true;
+                CB_LIST_OF_TEAMS_SelectionChanged(null, null);
+            }
         }
     }
 
@@ -513,16 +526,30 @@ namespace LIneupUsageEstimator
     {
         public string Text { get; set; }
         public Player Value { get; set; }
+        public bool Duplicate { get; set; }
 
         public override string ToString()
         {
-            return String.Format("{0} {1} ({2})\r\n{3} {4}{5} : {6}",
-                Value.Name,
-                Value.Throws,
-                Text,
-                Value.Bal,
-                Value.PowerL, Value.PowerR,
-                Value.Actual);
+            if (Duplicate)
+            {
+                return String.Format("DUPE: {0} {1} ({2})\r\n{3} {4}{5} : {6}",
+                    Value.Name,
+                    Value.Throws,
+                    Text,
+                    Value.Bal,
+                    Value.PowerL, Value.PowerR,
+                    Value.Actual);
+            }
+            else
+            {
+                return String.Format("{0} {1} ({2})\r\n{3} {4}{5} : {6}",
+                    Value.Name,
+                    Value.Throws,
+                    Text,
+                    Value.Bal,
+                    Value.PowerL, Value.PowerR,
+                    Value.Actual);
+            }
         }
     }
 

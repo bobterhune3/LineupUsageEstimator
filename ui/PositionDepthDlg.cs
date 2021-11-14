@@ -95,8 +95,8 @@ namespace LIneupUsageEstimator.ui
                 switch (pos)
                 {
                     case POSITIONS.CATCHER:
-                   //     p1Score = scorer.calculateFirstBaseDefScore(p1.Def.getDefRating(p1.Def.CatcherRating), p1.Def.getERating(p1.Def.CatcherRating));
-                  //      p2Score = scorer.calculateFirstBaseDefScore(p2.Def.getDefRating(p2.Def.CatcherRating), p2.Def.getERating(p2.Def.CatcherRating));
+//                        p1Score = scorer.calculateCatcherDefScore(p1.Def.getDefRating(p1.Def.CatcherRating), p1.Def.getERating(p1.Def.CatcherRating), Int32.Parse(p1.Def.OutfieldArm));
+//                        p2Score = scorer.calculateCatcherDefScore(p2.Def.getDefRating(p2.Def.CatcherRating), p2.Def.getERating(p2.Def.CatcherRating), Int32.Parse(p2.Def.OutfieldArm));
                         break;
                     case POSITIONS.FIRSTBASE:
                         p1Score = scorer.calculateFirstBaseDefScore(p1.Def.getDefRating(p1.Def.FirstBaseRating), p1.Def.getERating(p1.Def.FirstBaseRating));
@@ -115,16 +115,16 @@ namespace LIneupUsageEstimator.ui
                         p2Score = scorer.calculateShortStopDefScore(p2.Def.getDefRating(p2.Def.ShortstopRating), p2.Def.getERating(p2.Def.ShortstopRating));
                         break;
                     case POSITIONS.LEFTFIELD:
-                        p1Score = scorer.calculateLeftFieldDefScore(p1.Def.getDefRating(p1.Def.LeftFieldRating), p1.Def.getERating(p1.Def.LeftFieldRating));
-                        p2Score = scorer.calculateLeftFieldDefScore(p2.Def.getDefRating(p2.Def.LeftFieldRating), p2.Def.getERating(p2.Def.LeftFieldRating));
+                        p1Score = scorer.calculateLeftFieldDefScore(p1.Def.getDefRating(p1.Def.LeftFieldRating), p1.Def.getERating(p1.Def.LeftFieldRating), Int32.Parse(p1.Def.OutfieldArm));
+                        p2Score = scorer.calculateLeftFieldDefScore(p2.Def.getDefRating(p2.Def.LeftFieldRating), p2.Def.getERating(p2.Def.LeftFieldRating), Int32.Parse(p2.Def.OutfieldArm));
                         break;
                     case POSITIONS.CENTERFIELD:
-                        p1Score = scorer.calculateCenterFieldDefScore(p1.Def.getDefRating(p1.Def.CenterFieldRating), p1.Def.getERating(p1.Def.CenterFieldRating));
-                        p2Score = scorer.calculateCenterFieldDefScore(p2.Def.getDefRating(p2.Def.CenterFieldRating), p2.Def.getERating(p2.Def.CenterFieldRating));
+                        p1Score = scorer.calculateCenterFieldDefScore(p1.Def.getDefRating(p1.Def.CenterFieldRating), p1.Def.getERating(p1.Def.CenterFieldRating), Int32.Parse(p1.Def.OutfieldArm));
+                        p2Score = scorer.calculateCenterFieldDefScore(p2.Def.getDefRating(p2.Def.CenterFieldRating), p2.Def.getERating(p2.Def.CenterFieldRating), Int32.Parse(p2.Def.OutfieldArm));
                         break;
                     case POSITIONS.RIGHTFIELD:
-                        p1Score = scorer.calculateRightFieldDefScore(p1.Def.getDefRating(p1.Def.RightFieldRating), p1.Def.getERating(p1.Def.RightFieldRating));
-                        p2Score = scorer.calculateRightFieldDefScore(p2.Def.getDefRating(p2.Def.RightFieldRating), p2.Def.getERating(p2.Def.RightFieldRating));
+                        p1Score = scorer.calculateRightFieldDefScore(p1.Def.getDefRating(p1.Def.RightFieldRating), p1.Def.getERating(p1.Def.RightFieldRating), Int32.Parse(p1.Def.OutfieldArm));
+                        p2Score = scorer.calculateRightFieldDefScore(p2.Def.getDefRating(p2.Def.RightFieldRating), p2.Def.getERating(p2.Def.RightFieldRating), Int32.Parse(p2.Def.OutfieldArm));
                         break;
                 }
                 return p1Score.CompareTo(p2Score);
@@ -134,6 +134,7 @@ namespace LIneupUsageEstimator.ui
         private void addItemsToList(ListView list, List<Player> sortedPlayers, POSITIONS pos)
         {
             int rank = 1;
+            int arm = 999;
             foreach (Player player in sortedPlayers)
             {
                 String defRating = "N/A";
@@ -156,17 +157,22 @@ namespace LIneupUsageEstimator.ui
                         break;
                     case POSITIONS.LEFTFIELD:
                         defRating = player.Def.LeftFieldRating;
+                        arm = Int32.Parse(player.Def.OutfieldArm);
                         break;
                     case POSITIONS.CENTERFIELD:
                         defRating = player.Def.CenterFieldRating;
+                        arm = Int32.Parse(player.Def.OutfieldArm);
                         break;
                     case POSITIONS.RIGHTFIELD:
                         defRating = player.Def.RightFieldRating;
+                        arm = Int32.Parse(player.Def.OutfieldArm);
                         break;
                 }
 
-
-                list.Items.Add(new ListViewItem(rank++.ToString() + ") " + player.Name + " " + defRating + " " + player.Actual + "ab"));
+                if( arm == 999)
+                    list.Items.Add(new ListViewItem(rank++.ToString() + ") " + player.Name + " " + defRating + " " + player.Actual + "ab"));
+                else
+                    list.Items.Add(new ListViewItem(rank++.ToString() + ") " + player.Name + " " + defRating + " ("+arm+") "+ player.Actual + "ab"));
             }
         }
     }

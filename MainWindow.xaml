@@ -35,5 +35,6 @@
         <Button x:Name="BTN_SETTINGS" Content="Settings..." HorizontalAlignment="Left" Margin="517,16,0,0" VerticalAlignment="Top" Width="74" Click="BTN_SETTINGS_Click"/>
         <Button x:Name="BTN_MANAGE_LINEUPS_Copy" Content="Manage Lineup..." HorizontalAlignment="Left" Margin="241,16,0,0" VerticalAlignment="Top" Width="121" Click="BTN_MANAGE_LINEUPS_Click"/>
         <Button x:Name="BTN_MANAGE_LINEUPS_Copy1" Content="Lineup Depth View..." HorizontalAlignment="Left" Margin="377,40,0,0" VerticalAlignment="Top" Width="121" Click="BTN_LINEUP_DEPTH_VIEW_OnCLick"/>
+        <Button x:Name="BTN_RESET_LINEUP" Content="Reset Lineup" HorizontalAlignment="Left" Margin="1404,40,0,0" VerticalAlignment="Top" Width="74" Click="BTN_RESET_LINEUP_Click"/>
     </Grid>
 </Window>

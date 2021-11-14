@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>latest</LangVersion>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,6 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>LIneupUsageEstimator.App</StartupObject>
@@ -152,9 +154,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LineupEngine\LineupEngine.csproj">
-      <Project>{36e844a9-6e91-4f00-bdd2-d4787eb682d0}</Project>
-      <Name>LineupEngine</Name>
+    <ProjectReference Include="..\LineupEngine2\LineupEngine2.csproj">
+      <Project>{e953a411-ba6b-4960-85fd-2ef5acbb414e}</Project>
+      <Name>LineupEngine2</Name>
     </ProjectReference>
     <ProjectReference Include="..\somReportUtils\somReportUtils\somReportUtils.csproj">
       <Project>{910bb531-1f6d-437e-9d4b-31c78e1ad771}</Project>
