@@ -1,6 +1,11 @@
 # LineupUsageEstimator
 User Interface to help generate Strat-O-Matic Baseball lineups based on usage.
 
+
+![image](https://user-images.githubusercontent.com/16192253/169658220-4c400b02-dfea-4fd6-9b59-db97653f871b.png)
+![image](https://user-images.githubusercontent.com/16192253/169658240-01f6103e-7399-4ec2-a99f-eea30b496d60.png)
+![image](https://user-images.githubusercontent.com/16192253/169658258-12ebc5c7-c0e2-4717-adee-bf4342fd8f4a.png)
+
 **About this application**
 The Strat-O-Matic Computer Baseball games allows you to create multiple lineups based on the pitchers arm and the balance of the pitcher.  Many leagues have strict usage requirments for the players.  In a autoplay league it can be hard to estimate how much usage a player will get based on the lineups.
 
